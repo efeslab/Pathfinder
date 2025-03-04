@@ -1,6 +1,11 @@
 # Pathfinder
 
+[![arXiv](https://img.shields.io/badge/arXiv-2503.01390-b31b1b.svg)](https://arxiv.org/abs/2503.01390)
+[![DOI](https://img.shields.io/badge/DOI-10.1145/3720431-blue.svg)](https://doi.org/10.1145/3720431)
 
+Pathfinder is a scalable and accurate application-level crash-consistency tool. It leverages representative testing: a new crash-state space reduction strategy based on the key observation is that the consistency of crash states is often correlated, even if those crash states are not identical. Pathfinder supports testing both POSIX-based applications and MMIO-based applications.
+
+For more details, please refer to our [OOPSLA 25 paper](https://arxiv.org/abs/2503.01390).
 
 ## Directory structure
 
