@@ -1,0 +1,16 @@
+IPython
+cxxfilt
+graphviz
+intervaltree
+llvmlite
+matplotlib
+meson
+ncls
+networkx
+pandas
+progress
+psutil
+pygraphviz
+pyyaml
+redis
+tqdm

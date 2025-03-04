@@ -1,0 +1,12 @@
+[submodule "deps/pmemcheck"]
+	path = deps/pmemcheck
+	url = https://github.com/efeslab/pmemcheck.git
+[submodule "deps/pmdk"]
+	path = deps/pmdk
+	url = https://github.com/efeslab/pmdk.git
+[submodule "deps/jinja2cpp"]
+	path = deps/jinja2cpp
+	url = https://github.com/jinja2cpp/Jinja2Cpp.git
+[submodule "deps/libb64"]
+	path = deps/libb64
+	url = git@github.com:libb64/libb64.git

@@ -1,0 +1,23 @@
+#define PATHFINDER_VERSION_MAJOR @PATHFINDER_VERSION_MAJOR@
+#define PATHFINDER_VERSION_MINOR @PATHFINDER_VERSION_MINOR@
+
+#define BUILD_ROOT "@PROJECT_BINARY_DIR@"
+
+#cmakedefine DEBUG_MODE
+
+// pmemcheck (for tracing)
+#define PMEMCHECK_PATH "@PMCHK_EXE@"
+
+// pin and pintool (for syscall tracing and DPOR)
+#define PIN_PATH "@PROJECT_SOURCE_DIR@/pin_tool/pin-3.28/pin"
+#define PINTOOL_DPOR_MMIO_PATH "@PROJECT_SOURCE_DIR@/pin_tool/tool_src/obj-intel64/mmio_read_observer.so"
+#define PINTOOL_DPOR_POSIX_PATH "@PROJECT_SOURCE_DIR@/pin_tool/tool_src/obj-intel64/posix_read_observer.so"
+#define PINTOOL_TRACER_PATH "@PROJECT_SOURCE_DIR@/pin_tool/tool_src/obj-intel64/posix_tracer.so"
+
+// iangneal: for selective testing
+#define PATHFINDER_BEGIN_TOKEN "PATHFINDER_BEGIN_TESTING"
+#define PATHFINDER_END_TOKEN "PATHFINDER_END_TESTING"
+
+// for Pathfinder op tracing
+#define PATHFINDER_OP_BEGIN_TOKEN "PATHFINDER_OP_BEGIN"
+#define PATHFINDER_OP_END_TOKEN "PATHFINDER_OP_END"
