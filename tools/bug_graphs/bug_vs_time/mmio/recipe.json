@@ -1,0 +1,142 @@
+{
+    "title": "RECIPE Indices",
+    "mins": 90,
+    "lines": [
+        {
+            "label": "Squint-Rep",
+            "color": "tab:blue",
+            "targets": [
+                {
+                    "output_path": "/data/storage/squint/results/release/P_ART/P_ART_res_rep",
+                    "bug_locations": "p_art"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/P_BwTree/P_BwTree_res_rep",
+                    "bug_locations": "p_bwtree"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/P_CLHT/P_CLHT_Witcher_res_rep",
+                    "bug_locations": "p_clht"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/P_CLHT_Witcher_Aga/P_CLHT_Witcher_Aga_res_rep",
+                    "bug_locations": "p_clht"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/P_CLHT_Witcher_Aga_TX/P_CLHT_Witcher_Aga_TX_res_rep",
+                    "bug_locations": "p_clht"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/P_HOT/P_HOT_res_rep",
+                    "bug_locations": "p_hot"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/P_MassTree/P_MassTree_res_rep",
+                    "bug_locations": "p_masstree"
+                }
+            ]
+        },
+        {
+            "label": "Random",
+            "color": "blueviolet",
+            "targets": [
+                {
+                    "output_path": "/data/storage/squint/results/release/P_ART/P_ART_res_random",
+                    "bug_locations": "p_art"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/P_BwTree/P_BwTree_res_random",
+                    "bug_locations": "p_bwtree"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/P_CLHT/P_CLHT_Witcher_res_random",
+                    "bug_locations": "p_clht"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/P_CLHT_Witcher_Aga/P_CLHT_Witcher_Aga_res_random",
+                    "bug_locations": "p_clht"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/P_CLHT_Witcher_Aga_TX/P_CLHT_Witcher_Aga_TX_res_random",
+                    "bug_locations": "p_clht"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/P_HOT/P_HOT_res_random",
+                    "bug_locations": "p_hot"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/P_MassTree/P_MassTree_res_random",
+                    "bug_locations": "p_masstree"
+                }
+            ]
+        },
+        {
+            "label": "Linear",
+            "color": "tab:green",
+            "targets": [
+                {
+                    "output_path": "/data/storage/squint/results/release/P_ART/P_ART_res_linear",
+                    "bug_locations": "p_art"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/P_BwTree/P_BwTree_res_linear",
+                    "bug_locations": "p_bwtree"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/P_CLHT/P_CLHT_Witcher_res_linear",
+                    "bug_locations": "p_clht"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/P_CLHT_Witcher_Aga/P_CLHT_Witcher_Aga_res_linear",
+                    "bug_locations": "p_clht"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/P_CLHT_Witcher_Aga_TX/P_CLHT_Witcher_Aga_TX_res_linear",
+                    "bug_locations": "p_clht"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/P_HOT/P_HOT_res_linear",
+                    "bug_locations": "p_hot"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/P_MassTree/P_MassTree_res_linear",
+                    "bug_locations": "p_masstree"
+                }
+            ]
+        },
+        {
+            "label": "Exhaustive",
+            "color": "tab:red",
+            "targets": [
+                {
+                    "output_path": "/data/storage/squint/results/release/P_ART/P_ART_res_exhaust",
+                    "bug_locations": "p_art"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/P_BwTree/P_BwTree_res_exhaust",
+                    "bug_locations": "p_bwtree"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/P_CLHT/P_CLHT_Witcher_res_exhaust",
+                    "bug_locations": "p_clht"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/P_CLHT_Witcher_Aga/P_CLHT_Witcher_Aga_res_exhaust",
+                    "bug_locations": "p_clht"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/P_CLHT_Witcher_Aga_TX/P_CLHT_Witcher_Aga_TX_res_exhaust",
+                    "bug_locations": "p_clht"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/P_HOT/P_HOT_res_exhaust",
+                    "bug_locations": "p_hot"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/P_MassTree/P_MassTree_res_exhaust",
+                    "bug_locations": "p_masstree"
+                }
+            ]
+        }
+    ]
+}

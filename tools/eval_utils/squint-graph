@@ -1,0 +1,183 @@
+#! /usr/bin/env python3
+'''
+Graph bugs over time from Squint output
+'''
+
+from argparse import ArgumentParser
+from IPython import embed
+from pathlib import Path
+# from threading import Thread, Lock
+import multiprocessing
+from collections import Counter
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.ticker as tkr
+import numpy as np
+import math
+import time
+import json
+import logging
+import csv
+
+import ..eval_utils.bug_locations
+
+MAX_N_PROCS = 40
+CHUNK_SIZE = 500
+
+print_undiagnosed = False
+
+
+def graph_line(line, max_mins, log_path, parallelize=False):
+    # Add a line to the graph using several targets' bugs over time
+    # Returns the total bugs on this line of the graph
+    logging.info("Graphing line: " + line["label"])
+
+    totalbugs = 0
+    total_bugs_over_time = {}
+    # Copies so we can delete as we go.
+    bugs_lists = bug_locations.get_bugs()
+    for target in line["targets"]:
+        bugs_list = bugs_lists[target["bug_locations"]]
+
+        logging.info("Getting bugs for target: " + target["output_path"])
+        if not parallelize:
+            target_bugs_per_second = get_diagnosed_bugs_over_time(
+                bugs_list, Path(target["output_path"]), target["bug_locations"])
+        else:
+            target_bugs_per_second = get_diagnosed_bugs_parallelized(
+                bugs_list, Path(target["output_path"]), line["label"], target["bug_locations"])
+
+        # merge all bugs per second
+        # here, we need to create a new dict which has the correct number of bugs per
+        # seconds at all the timestamps we have across the dictionaries
+        sorted_keys = sorted(set(list(total_bugs_over_time.keys()) + list(target_bugs_per_second.keys())))
+        logging.info(sorted_keys)
+
+        last_nbugs_target = 0
+        last_nbugs_total = 0
+        for key in sorted_keys:
+            if key in target_bugs_per_second.keys():
+                last_nbugs_target = target_bugs_per_second[key]
+            if key in total_bugs_over_time.keys():
+                last_nbugs_total = total_bugs_over_time[key]
+
+            total_bugs_over_time[key] = (last_nbugs_target + last_nbugs_total)
+
+        # keep total count of bugs across all line (update this each time we merge a line)
+        totalbugs = last_nbugs_target + last_nbugs_total
+
+        logging.info("Current bugs per second:")
+        logging.info(total_bugs_over_time)
+        logging.info("\n") # newline
+
+    logging.info("Final bugs over time:")
+    dict_str = ', '.join([ f'"{k}": {v}' for k, v in total_bugs_over_time.items() ])
+    logging.info(f'{{ {dict_str} }}')
+
+    plot_line(total_bugs_over_time, line, max_mins)
+
+    return totalbugs
+
+def plot_line(total_bugs_over_time, line, max_mins):
+    # Graph the line
+    lists = sorted(total_bugs_over_time.items()) # sorted by key, return a list of tuples
+    x, y = zip(*lists) # unpack a list of pairs into two tuples
+
+    if 'linestyle' not in line:
+        line['linestyle'] = 'solid'
+
+    plt.step(x, y, where="post", label=line["label"], color=line["color"], linestyle=line["linestyle"])
+    if x[-1] / 60 < max_mins and line['marker']:
+        plt.scatter(x[-1], y[-1], marker='x', color=line["color"], linestyle='solid')
+    elif line['marker']:
+        last_y = 0
+        for x, y in lists:
+            if x <= 60 * max_mins - 7: # make the marker look nicer
+                last_y = y
+        plt.scatter(60 * max_mins - 7, last_y, marker='x', color=line["color"], linestyle='solid')
+
+def main():
+    parser = ArgumentParser()
+    parser.add_argument('--input', type=str, help='JSON format input file specifying what to graph.')
+    parser.add_argument('--output', '-o', type=str, default='out.pdf', help='Output graph file name.')
+    parser.add_argument('--print-undiagnosed', '-u', action='store_true', help='Log undiagnosed bugs.')
+    parser.add_argument('--log', type=str, default='graph_log.txt', help='File for logging stats.')
+    parser.add_argument('--cache', type=str, default="", help='Plot the graph using cached data.')
+    parser.add_argument('--mp', '-j', action='store_true', default=True, help='Whether to use multi-processing for generating graphs.')
+
+    args = parser.parse_args()
+
+    if args.cache != "":
+        cache_data = json.load(open(args.cache))
+        for line in cache_data["lines"]:
+            total_bugs_over_time = dict()
+            for k, v in line["total_bugs_over_time"].items():
+                total_bugs_over_time[int(k)] = v
+            plot_line(total_bugs_over_time, line, cache_data["mins"])
+        maxbugs = cache_data["max_bugs"]
+        mins = cache_data["mins"]
+        title = cache_data["title"]
+    else:
+
+        argsin = json.load(open(args.input))
+
+        global print_undiagnosed
+        print_undiagnosed = args.print_undiagnosed
+
+        # create the lines for each graph:
+        maxbugs = 0
+
+        logging.basicConfig(level=logging.INFO,
+                            format="%(asctime)s [%(levelname)s] %(message)s",
+                            handlers=[
+                                logging.FileHandler(args.log),
+                                logging.StreamHandler()
+                            ])
+
+        for line in argsin["lines"]:
+            nbugs = graph_line(line, argsin["mins"], args.log, args.mp)
+            maxbugs = max(maxbugs, nbugs)
+        mins = argsin["mins"]
+        title = argsin["title"]
+
+    # Set graph parameters and create the graph:
+    TICKSIZE = 8
+    LEGENDSIZE = 8
+    LABELSIZE = 8
+    TITLESIZE = 8
+    N_YTICKS = 6
+    N_XTICKS = 6
+    # add a slight gap on the left of the graph proportional to the size of the graph
+    plt.xlim(-mins * 2, mins * 60)
+
+    ystep = max(int(math.ceil(maxbugs / N_YTICKS)), 1)
+    maxytick = maxbugs + ystep
+    plt.yticks(np.arange(0, maxytick, step=ystep), fontsize=TICKSIZE)
+
+    secs = mins * 60
+    xstep = int(math.ceil(secs / N_XTICKS))
+    maxxtick = secs + xstep
+    plt.xticks(np.arange(0, maxxtick, step=xstep), fontsize=TICKSIZE)
+
+    # divide the labels on the axis from seconds to minutes
+    def secsToMins(x, pos):
+        s = '{}'.format(round((x / 60.0), 1))
+        return s
+    plt.gca().xaxis.set_major_formatter(tkr.FuncFormatter(secsToMins))
+
+
+    plt.ylabel("Number of Bugs", fontsize=LABELSIZE)
+    plt.xlabel("Time (Minutes)", fontsize=LABELSIZE)
+    plt.legend(loc='lower right', prop={'size':LEGENDSIZE})
+    if title:
+        plt.title(title, fontsize=TITLESIZE)
+
+    fig = plt.gcf()
+    fig.set_size_inches(3.5, 2.0)
+    fig.tight_layout()
+
+    plt.savefig(args.output, dpi=300, bbox_inches='tight', pad_inches=0.02)
+    plt.close()
+
+if __name__ == '__main__':
+    main()

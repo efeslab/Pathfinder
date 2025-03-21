@@ -1,0 +1,300 @@
+#! /usr/bin/env python3
+
+import os
+import shutil
+from IPython import embed
+from argparse import ArgumentParser, Namespace
+from collections import defaultdict
+from multiprocessing import Pool
+from pathlib import Path
+from tqdm import tqdm
+from typing import List
+import json
+import pandas as pd
+import shlex
+import subprocess
+import sys
+
+pd.set_option('display.max_rows', None)
+
+
+UTILS_PATH = Path('@CMAKE_CURRENT_SOURCE_DIR@') / 'eval_utils'
+if not UTILS_PATH.exists():
+    raise Exception(
+        f'Cannot find {UTILS_PATH}, which is required for running the eval!')
+
+sys.path.append(str(UTILS_PATH))
+from bug_locations import *
+from eval_targets import *
+from locate_bugs_in_results import *
+
+SQUINT_EXE_PATH = (Path('@CMAKE_BINARY_DIR@') / 'squint/squint-pm').resolve()
+
+TARGETS_PATH = (Path('@CMAKE_BINARY_DIR@') / 'targets').resolve()
+
+RESULTS_PATH = (Path('/data/storage/squint/eval_results')).resolve()
+
+def _get_target_set_name(args: Namespace) -> None:
+    return f'{args.cmd}_{args.target_set_size}'
+
+def _run_evaluation(args: List[str]) -> bool:
+    completed_proc = subprocess.run(args, capture_output=True)
+    success = completed_proc.returncode == 0
+    if not success:
+        return success, args, (completed_proc.stdout.decode(),
+                               completed_proc.stderr.decode())
+    else:
+        return success, args, None
+
+def _run_parallel_evaluations(
+        args: Namespace,
+        arg_lists: List[List[str]]
+        ) -> bool:
+    with Pool() as p:
+        imap = p.imap_unordered(_run_evaluation, arg_lists)
+        all_results = list(tqdm(imap, total=len(arg_lists), desc='Running evaluation targets'))
+
+    failed_tests = []
+    for success, arg_list, proc_info in all_results:
+        if not success:
+            cmd = ' '.join(arg_list)
+            stdout, stderr = proc_info
+            failed_tests += [{
+                'cmd': cmd,
+                'stdout': stdout,
+                'stderr': stderr,
+            }]
+
+    if failed_tests:
+        with (args.results_dir / 'failed_tests.json').open('w') as f:
+            json.dump(failed_tests, f)
+
+    return len(failed_tests) == 0
+
+
+def _get_target_results_dir(
+        target_name: str, target_config: str, results_dir: Path) -> Path:
+    config_path = Path(target_config)
+    config_name = config_path.stem
+    config_root_name = '_'.join(config_path.parts[:-1])
+    config_root = f'{config_root_name}_{config_name}'
+    return Path(f'{results_dir}/{target_name}/{config_root}___results')
+
+def _check_if_already_evaluated(results_dir: Path) -> bool:
+    success_file = results_dir / 'testing_completed'
+    return success_file.exists()
+
+def _get_squint_args(
+        args: Namespace, target_config: str, target_results_dir: Path) -> List[str]:
+    target_path = (TARGETS_PATH / target_config).resolve()
+    if not target_path.exists():
+        raise Exception(f'{target_path = } does not exist! Cannot test given target.')
+
+    arg_str = (f' {str(SQUINT_EXE_PATH)} {str(target_path)} '
+               f' --general.output_dir_tmpl="{str(target_results_dir)}" '
+               f' --general.pm_fs_path="{str(args.pm_fs_path)}" '
+               f' --general.selective_testing={1 if args.selective_testing else 0} ')
+    return shlex.split(arg_str)
+
+def run_squint_eval(args: Namespace) -> None:
+    '''
+    Run the evaluations.
+    '''
+
+    target_set_name = _get_target_set_name(args)
+    targets = get_target_set(target_set_name)
+
+    arg_lists = []
+    output_map = defaultdict(dict)
+
+    for target, target_config_list in targets.items():
+        for target_config in target_config_list:
+            target_results_dir = _get_target_results_dir(
+                target, target_config, args.results_dir)
+            target_args = _get_squint_args(args, target_config, target_results_dir)
+            if _check_if_already_evaluated(target_results_dir) and not args.override:
+                print(f'{target_config} already evaluated!')
+            else:
+                arg_lists += [target_args]
+            output_map[target][target_config] = target_results_dir
+
+    # Run the evaluations
+    eval_res = _run_parallel_evaluations(args, arg_lists)
+    if not eval_res:
+        raise Exception(
+            ('Evaluations failed to run successfully!\n'
+             f'See failed test file for details: {args.results_dir / "failed_tests.json"}')
+        )
+
+    all_bugs = get_bugs()
+
+    # Now that that's run, extract the bugs.
+    bug_timestamps = {}
+    for target, output_config_map in output_map.items():
+
+        bugs_list = all_bugs[target]
+
+        bug_timestamps[target] = {}
+
+        for config, res_dir in output_config_map.items():
+
+            if not res_dir.exists():
+                print(f"Skipping {res_dir} because it doesn't exist")
+                continue
+
+            diagnosed, undiagnosed = find_bugs_in_results_parallelized(
+                bugs_list, res_dir)
+
+            if undiagnosed:
+                print(f'Warning: found {len(undiagnosed)} undiagnosed bugs!')
+                print('\tDropping into a diagnosis shell.')
+                stores = get_stores(res_dir)
+                embed()
+                print('Continuing')
+
+            assert config not in bug_timestamps[target]
+            bug_timestamps[target][config] = diagnosed
+
+            last_ts = get_latest_timestamp(res_dir)
+
+            if 'last_timestamp' not in bug_timestamps[target]:
+                bug_timestamps[target]['last_timestamp'] = last_ts
+            else:
+                bug_timestamps[target]['last_timestamp'] = max(
+                    bug_timestamps[target]['last_timestamp'], last_ts)
+
+            if 'total' not in bug_timestamps[target]:
+                bug_timestamps[target]['total'] = diagnosed
+            else:
+                for bug_id, ts in diagnosed.items():
+                    if ts is None:
+                        continue
+
+                    curr = bug_timestamps[target]['total'][bug_id]
+                    bug_timestamps[target]['total'][bug_id] = ts if curr is None else min(ts, curr)
+
+    # See if we missed any bugs
+    missed_bugs = defaultdict(list)
+    for target, d in bug_timestamps.items():
+        for bug_id, ts in d['total'].items():
+            if ts is None:
+                missed_bugs[target] += [bug_id]
+
+    # Output the bug timeline summary information.
+    summary_file = args.results_dir / 'summary.json'
+    missed_file  = args.results_dir / 'missed.json'
+
+    with summary_file.open('w') as f:
+        json.dump(dict(bug_timestamps), f)
+    print(f'Output summary information to {str(summary_file)}')
+
+    if missed_bugs:
+        print(f'Missed some bugs!\n{missed_bugs}')
+        with missed_file.open('w') as f:
+            json.dump(missed_bugs, f)
+        print(f'Output missed bug info to {str(missed_file)}')
+
+
+def run_jaaru_eval(args: Namespace) -> None:
+    raise NotImplementedError()
+
+def _finalize_args(args: Namespace) -> None:
+    if args.override:
+        confirm = ['yes', 'y']
+        deny = ['no', 'n']
+        attempts = 0
+        while attempts < 3:
+            res = input('--override was provided: do you truly wish to override current results? [y/n]').lower()
+            if res in deny:
+                print('Disabling --override')
+                args.override = False
+                break
+            if res in confirm:
+                print('Confirmed.')
+                break
+            attempts += 1
+        else:
+            sys.exit('Failed to confirm --override intention.')
+
+    if args.selective_testing:
+        subdir = f'{args.target_set_size}_selective'
+    else:
+        subdir = args.target_set_size
+
+    args.results_dir = (args.results_dir / subdir).absolute()
+
+    if args.backup:
+        if args.results_dir.exists():
+            res_create_date = args.results_dir.stat().st_ctime
+            backup_dir = None
+            i = 1
+            while backup_dir is None or backup_dir.exists():
+                backup_dir = args.results_dir.parent / f'{subdir}__backup_{i}'
+                i += 1
+            print(f'Backing up {args.results_dir} to {backup_dir}')
+            shutil.move(args.results_dir, backup_dir)
+        else:
+            print('"--backup" option specified, but not results to back up! Ignoring for now.')
+
+    assert args.pm_fs_path.exists()
+
+def _cleanup(args: Namespace) -> None:
+    for pm_fobj in args.pm_fs_path.iterdir():
+        if pm_fobj.stat().st_uid == os.getuid():
+            if pm_fobj.is_dir():
+                shutil.rmtree(str(pm_fobj))
+            else:
+                pm_fobj.unlink()
+
+def main() -> None:
+
+    parser = ArgumentParser(
+        description='A script to run the evaluation for the Squint paper.')
+    parser.add_argument('--results-dir', '-d',
+        default=RESULTS_PATH, type=Path,
+        help='Directory for storing evaluation results (and cached partial results).')
+    parser.add_argument('--override', action='store_true',
+        help='Override any cached files and re-execute completed results.')
+    parser.add_argument('--backup', action='store_true',
+        help='Backup old results files and re-execute results.')
+    parser.add_argument('--target-set-size', '-s', type=str,
+                        choices=['full', 'small'],
+        help='Size of tests to run.', default='full')
+    parser.add_argument('--selective-testing', action='store_true',
+        help='Enable selective testing in Squint (for Jaaru comparison).')
+    parser.add_argument('--pm-fs-path', type=Path, default=Path('/mnt/pmem'),
+        help='Path to PM mount location (or simulated).')
+
+    subparser = parser.add_subparsers(help='command help')
+
+    squint_args = subparser.add_parser('squint', help="Run Squint's evaluation.")
+    squint_args.set_defaults(cmd=squint_args.prog.split()[-1],
+                             fns=[run_squint_eval])
+
+    jaaru_args = subparser.add_parser('jaaru', help="Run Jaaru's evalaution.")
+    jaaru_args.set_defaults(cmd=jaaru_args.prog.split()[-1],
+                            fns=[run_jaaru_eval])
+
+    all_args = subparser.add_parser('all',
+                                    help='Run evaluations for all systems.')
+    all_args.set_defaults(cmd=all_args.prog.split()[-1],
+                          fns=[run_squint_eval, run_jaaru_eval])
+
+    # Multi-pass parsing: https://stackoverflow.com/questions/46962065/add-top-level-argparse-arguments-after-subparser-args
+    args = parser.parse_known_args()
+    args = parser.parse_args(args[1], args[0])
+
+    if 'fns' not in args:
+        raise Exception('Callback functions ("fns") not registered! Please fix argparse configuation.')
+
+    _finalize_args(args)
+
+    _cleanup(args)
+
+    for fn in tqdm(args.fns, desc='Running evaluation systems...', leave=False):
+        fn(args)
+
+    _cleanup(args)
+
+if __name__ == '__main__':
+    main()

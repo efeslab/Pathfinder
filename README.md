@@ -16,6 +16,8 @@ For more details, please refer to our [OOPSLA 25 paper](https://arxiv.org/abs/25
 
 ## Setup instructions
 
+CMAKE Version: [3.25-3.31]
+
 1. Install libraries
 
 ```

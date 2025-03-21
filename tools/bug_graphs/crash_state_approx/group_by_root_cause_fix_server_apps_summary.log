@@ -1,0 +1,24 @@
+memcached exhaustive:
+bug_id_to_crash_state_error_status: {'2': 7705, '0': 19, '1': 19}
+bug_id_to_crash_state_normal_status: {'2': 1415, '0': 1, '1': 1}
+memcached representative
+bug_id_to_crash_state_error_status: {'2': 217, '0': 4, '1': 10}
+bug_id_to_crash_state_normal_status: {'2': 207, '0': 7, '1': 6}
+hse_v2 exhaustive
+bug_id_to_crash_state_error_status: {}
+bug_id_to_crash_state_normal_status: {'0': 2230}
+hse_v2 representative
+bug_id_to_crash_state_error_status: {'0': 2}
+bug_id_to_crash_state_normal_status: {'0': 42}
+hse_v1 exhaustive
+bug_id_to_crash_state_error_status: {}
+bug_id_to_crash_state_normal_status: {'0': 2184}
+hse_v1 representative
+bug_id_to_crash_state_error_status: {'0': 2}
+bug_id_to_crash_state_normal_status: {'0': 42}
+redis exhaustive
+bug_id_to_crash_state_error_status: {'0': 1076}
+bug_id_to_crash_state_normal_status: {'0': 2832}
+redis representative
+bug_id_to_crash_state_error_status: {'0': 661}
+bug_id_to_crash_state_normal_status: {'0': 146}

@@ -1,0 +1,16 @@
+INFO:root:path: /home/yilegu/squint/justification/data/storage/squint/results/release/hse/hse_res_exhaust
+INFO:root:total_crash_states: 2230
+INFO:root:path: /home/yilegu/squint/justification/data/storage/squint/results/release/hse/hse_res_rep
+INFO:root:total_crash_states: 44
+INFO:root:path: /home/yilegu/squint/justification/data/storage/squint/results/release/hse_rollback/hse_res_rollback_exhaust
+INFO:root:total_crash_states: 2184
+INFO:root:path: /home/yilegu/squint/justification/data/storage/squint/results/release/hse_rollback/hse_res_rollback_rep
+INFO:root:total_crash_states: 44
+INFO:root:path: /home/yilegu/squint/justification/data/storage/squint/results/release/redis/redis_res_exhaust
+INFO:root:total_crash_states: 10004
+INFO:root:path: /home/yilegu/squint/justification/data/storage/squint/results/release/redis/redis_res_rep
+INFO:root:total_crash_states: 977
+INFO:root:path: /home/yilegu/squint/justification/data/storage/squint/results/release/memcached/memcached_res_exhaust
+INFO:root:total_crash_states: 9161
+INFO:root:path: /home/yilegu/squint/justification/data/storage/squint/results/release/memcached/memcached_res_rep
+INFO:root:total_crash_states: 432

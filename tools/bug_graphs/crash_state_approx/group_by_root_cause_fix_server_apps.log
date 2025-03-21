@@ -1,0 +1,24 @@
+INFO:root:path: /home/yilegu/squint/justification/data/storage/squint/results/release/memcached/memcached_res_exhaust
+INFO:root:bug_id_to_hit_crash_state: {'2': 7705, '0': 19, '1': 19}
+INFO:root:bug_id_to_miss_crash_state: {'2': 1415, '0': 1, '1': 1}
+INFO:root:path: /home/yilegu/squint/justification/data/storage/squint/results/release/memcached/memcached_res_rep
+INFO:root:bug_id_to_hit_crash_state: {'2': 217, '0': 4, '1': 10}
+INFO:root:bug_id_to_miss_crash_state: {'2': 207, '0': 7, '1': 6}
+INFO:root:path: /home/yilegu/squint/justification/data/storage/squint/results/release/hse/hse_res_exhaust
+INFO:root:bug_id_to_hit_crash_state: {}
+INFO:root:bug_id_to_miss_crash_state: {'0': 2230}
+INFO:root:path: /home/yilegu/squint/justification/data/storage/squint/results/release/hse/hse_res_rep
+INFO:root:bug_id_to_hit_crash_state: {'0': 2}
+INFO:root:bug_id_to_miss_crash_state: {'0': 42}
+INFO:root:path: /home/yilegu/squint/justification/data/storage/squint/results/release/hse_rollback/hse_res_rollback_exhaust
+INFO:root:bug_id_to_hit_crash_state: {}
+INFO:root:bug_id_to_miss_crash_state: {'0': 2184}
+INFO:root:path: /home/yilegu/squint/justification/data/storage/squint/results/release/hse_rollback/hse_res_rollback_rep
+INFO:root:bug_id_to_hit_crash_state: {'0': 2}
+INFO:root:bug_id_to_miss_crash_state: {'0': 42}
+INFO:root:path: /home/yilegu/squint/justification/data/storage/squint/results/release/redis/redis_res_exhaust
+INFO:root:bug_id_to_hit_crash_state: {'0': 1076}
+INFO:root:bug_id_to_miss_crash_state: {'0': 2832}
+INFO:root:path: /home/yilegu/squint/justification/data/storage/squint/results/release/redis/redis_res_rep
+INFO:root:bug_id_to_hit_crash_state: {'0': 661}
+INFO:root:bug_id_to_miss_crash_state: {'0': 146}

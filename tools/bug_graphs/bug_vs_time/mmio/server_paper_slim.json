@@ -1,0 +1,57 @@
+{
+    "title": "",
+    "mins": 180,
+    "max_bugs": 6,
+    "lines": [
+        {
+            "label": "Sǫᴜɪɴᴛ",
+            "color": "tab:blue",
+            "linestyle": "solid",
+            "marker": true,
+            "total_bugs_over_time": { "0": 0, "299": 3, "325": 5, "588": 6, "1076": 6, "256": 3, "5147": 6, "51": 0, "97": 1, "272": 3, "56": 0, "103": 2, "279": 3 },
+            "targets": [
+                {
+                    "output_path": "/data/storage/squint/results/release/memcached/memcached_res_rep",
+                    "bug_locations": "memcached"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/redis/redis_res_rep",
+                    "bug_locations": "redis"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/hse/hse_res_rep",
+                    "bug_locations": "hse_v1"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/hse_rollback/hse_res_rollback_rep",
+                    "bug_locations": "hse_v2"
+                }
+            ]
+        },
+        {
+            "label": "Exhaustive",
+            "color": "tab:red",
+            "linestyle": "dotted",
+            "marker": false,
+            "total_bugs_over_time": { "0": 0, "234": 0, "235": 3, "3903": 4, "221": 0, "249": 4, "14641": 4, "49": 0, "3673": 4, "86": 0, "3709": 4 },
+            "targets": [
+                {
+                    "output_path": "/data/storage/squint/results/release/memcached/memcached_res_exhaust",
+                    "bug_locations": "memcached"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/redis/redis_res_exhaust",
+                    "bug_locations": "redis"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/hse/hse_res_exhaust",
+                    "bug_locations": "hse_v1"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/hse_rollback/hse_res_rollback_exhaust",
+                    "bug_locations": "hse_v2"
+                }
+            ]
+        }
+    ]
+}

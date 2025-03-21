@@ -1,0 +1,90 @@
+#! /usr/bin/env python3
+
+from argparse import ArgumentParser
+from pathlib import Path
+from IPython import embed
+from math import isnan
+import itertools
+import pandas as pd
+
+def load_stores(input_dir: Path) -> pd.DataFrame:
+    trace_file = input_dir / 'full_trace.csv'
+    assert trace_file.exists()
+    df = pd.read_csv(trace_file)
+    df = df[df['event_type'] == 'STORE'].reset_index(drop=True)
+    assert (df.index == df['store_id']).all()
+    return df
+
+def load_groups(input_dir: Path) -> pd.DataFrame:
+    events_file = input_dir / 'groups.csv'
+    assert events_file.exists()
+    return pd.read_csv(events_file)
+
+def get_results_ratio(results_dir):
+    groups = load_groups(results_dir)
+    stores = load_stores(results_dir)
+
+    index = []
+    data = {
+        'covered': [],
+        'uncovered': [],
+        'total': []
+    }
+
+    for group in groups.iloc:
+        if type(group.group_members) == float and isnan(group.group_members):
+            continue
+        rep = [int(s) for s in group.group_representative.split(';')]
+        if len(rep) <= 1:
+            continue
+
+        members = group.group_members.split('|')
+        member_store_ids = [ int(s) for s in itertools.chain.from_iterable([m.split(';') for m in members]) ]
+
+        rep_stores = [stores.iloc[s] for s in rep]
+        member_stores = [stores.iloc[s] for s in member_store_ids]
+
+        rep_set = { s['binary_address_0'] for s in rep_stores }
+        member_locs = [ s['binary_address_0'] for s in member_stores ]
+
+        n_in_set = 0
+        n_out_set = 0
+        for loc in member_locs:
+            if loc in rep_set:
+                n_in_set += 1
+            else:
+                n_out_set += 1
+
+        index += [group.group_id]
+        data['covered'] += [n_in_set]
+        data['uncovered'] += [n_out_set]
+        data['total'] += [n_in_set + n_out_set]
+
+    ratio_df = pd.DataFrame(data, index=index)
+
+    return ratio_df.sum().uncovered / ratio_df.sum().total
+
+
+def main():
+    parser = ArgumentParser('Measure uniqueness of context.')
+
+    parser.add_argument('results_meta_dir', type=Path)
+
+    args = parser.parse_args()
+    assert args.results_meta_dir.exists(), f'{args.results_meta_dir} does not exist!'
+
+    ratios = []
+
+    for results_dir in args.results_meta_dir.iterdir():
+        if not (results_dir / 'groups.csv').exists():
+            continue
+
+        print(results_dir)
+        ratios += [ get_results_ratio(results_dir) ]
+
+    print(f'{ratios}')
+    print(f'{sum(ratios) / len(ratios) = }')
+
+
+if __name__ == '__main__':
+    exit(main())

@@ -1,0 +1,65 @@
+{
+    "title": "",
+    "mins": 180,
+    "max_bugs": 45,
+    "lines": [
+        {
+            "label": "Sǫᴜɪɴᴛ",
+            "color": "tab:blue",
+            "linestyle": "solid",
+            "marker": true,
+            "total_bugs_over_time": {"0": 0, "69": 2, "235": 12, "300": 29, "336": 39, "897": 45, "85": 3, "238": 14, "277": 25, "282": 26, "315": 33, "372": 41, "610": 45, "36": 1, "153": 6, "206": 8, "211": 10, "224": 11, "237": 13, "246": 15, "247": 16, "252": 18, "259": 19, "262": 20, "265": 22, "266": 24, "291": 27, "293": 28, "301": 31, "302": 32, "333": 35, "334": 37, "352": 40, "381": 42, "385": 43, "405": 44, "556": 45, "116": 4, "451": 45, "702": 45, "124": 5, "980": 45},
+            "targets": [
+                {
+                    "output_path": "/data/storage/squint/results/release/cceh/cceh_res_rep",
+                    "bug_locations": "cceh"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/FAST_FAIR/FAST_FAIR_res_rep",
+                    "bug_locations": "fast_fair"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/level_hashing/level_hashing_res_rep",
+                    "bug_locations": "level_hashing"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/woart/woart_res_rep",
+                    "bug_locations": "woart"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/wort/wort_res_rep",
+                    "bug_locations": "wort"
+                }
+            ]
+        },
+        {
+            "label": "Exhaustive",
+            "color": "tab:red",
+            "linestyle": "dotted",
+            "marker": false,
+            "total_bugs_over_time": {"0": 0, "20": 2, "22": 4, "47": 9, "2422": 39, "24": 6, "26": 7, "59": 10, "60": 11, "537": 24, "1859": 39, "17": 1, "38": 8, "140": 13, "144": 15, "156": 16, "175": 17, "188": 18, "214": 20, "228": 21, "247": 22, "447": 23, "857": 26, "873": 28, "937": 29, "948": 30, "958": 32, "965": 33, "970": 34, "1124": 35, "1130": 36, "1135": 37, "1144": 38, "1240": 39, "4826": 40, "4831": 41, "4832": 42, "17495": 42, "206": 19, "13760": 42, "23": 5, "8768": 42},
+            "targets": [
+                {
+                    "output_path": "/data/storage/squint/results/release/cceh/cceh_res_exhaust",
+                    "bug_locations": "cceh"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/FAST_FAIR/FAST_FAIR_res_exhaust",
+                    "bug_locations": "fast_fair"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/level_hashing/level_hashing_res_exhaust",
+                    "bug_locations": "level_hashing"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/woart/woart_res_exhaust",
+                    "bug_locations": "woart"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/wort/wort_res_exhaust",
+                    "bug_locations": "wort"
+                }
+            ]
+        }
+    ]
+}

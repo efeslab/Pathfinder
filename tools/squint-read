@@ -1,0 +1,478 @@
+#! /usr/bin/env python3
+'''
+Read/analyze Squint output files.
+'''
+
+from argparse import ArgumentParser, Namespace
+from collections import defaultdict
+from pathlib import Path
+from typing import Dict
+from IPython import embed
+from textwrap import indent
+import datetime
+
+import sys
+import zlib
+
+import pandas as pd
+from yaml import events
+pd.set_option('display.max_rows', None)
+
+
+def get_args() -> Namespace:
+    '''
+    Do argparse stuff.
+    '''
+
+    parser = ArgumentParser(description=__doc__)
+
+    parser.add_argument('input', metavar='SQUINT-RESULTS-DIR', type=Path,
+        help='Path to the output directory from squint-pm invocation')
+
+    args = parser.parse_args()
+
+    # Post-processing.
+
+    assert args.input.exists()
+
+    return args
+
+def restore_file(zbytes: bytes, fpath: str) -> None:
+    from base64 import b64decode
+    with open(fpath, 'wb') as f:
+        try:
+            f.write(zlib.decompress(b64decode(zbytes)))
+        except:
+            f.write(b64decode(zbytes))
+
+def find_frame_match(stores, bugs, partial):
+    for k, sdict in stores.items():
+        if k not in bugs:
+            continue
+
+        for sk, store in sdict.items():
+            if isinstance(sk, str) and 'store' in sk:
+                continue
+
+            for f in store.trace.trace:
+                if partial in f:
+                    print(k, sk, f)
+
+def print_time(t):
+    dt = datetime.timedelta(seconds=t)
+    print(str(dt))
+
+def subgraph_savings(stats):
+    curr_analysis_time = stats['squint_time']
+
+    edge_time = stats['subgraph_construction_time'] / stats['total_edges']
+
+    base = curr_analysis_time - stats['subgraph_construction_time']
+
+    bad_analysis_time = base + (edge_time * stats['edge_comparisons'])
+
+    tf = lambda t: str(datetime.timedelta(seconds=t))
+
+    print(f'Current: {tf(curr_analysis_time)}')
+    print(f'Unopt: {tf(bad_analysis_time)}')
+    print(f'Speedup: {bad_analysis_time / curr_analysis_time}')
+
+def print_speedup(stats, h, m, s):
+    ts = (h * 60 * 60) + (m * 60) + s
+    print(f'{ts / stats["total_time"]}')
+
+def load_stores(input_dir: Path) -> pd.DataFrame:
+    events_file = input_dir / 'events.csv'
+    assert events_file.exists()
+    return pd.read_csv(events_file)
+
+def load_trace(input_dir: Path) -> pd.DataFrame:
+    trace_file = input_dir / 'full_trace.csv'
+    if trace_file.exists():
+        return pd.read_csv(trace_file)
+    return None
+
+
+def load_tests(input_dir: Path) -> Dict[int, Dict[int, pd.DataFrame]]:
+    '''
+    '''
+    import re
+    fname_rgx = re.compile(r'(\d+)_(\d+)\.csv')
+
+    tests = {}
+    for f in input_dir.iterdir():
+        if f.name in ['events.csv', 'full_trace.csv', 'info.txt']:
+            continue
+        matches = fname_rgx.match(f.name)
+        # assert matches is not None
+        if matches is None:
+            continue
+
+        testid = int(matches.group(1))
+        testcaseid = int(matches.group(2))
+        try:
+            df = pd.read_csv(f)
+            if not len(df):
+                continue
+            tests[f'{testid}_{testcaseid}'] = df
+        except Exception as e:
+            print(testid, testcaseid)
+            print(e)
+            pass
+
+    return tests
+
+def find_store_id(tests, id):
+    for tname, df in tests.items():
+        if str(id) in df.columns:
+            print(tname)
+
+def get_bugs(tests):
+    bugs = {}
+    for tname, df in tests.items():
+        if df.ret_code.any():
+            bugs[tname] = df
+    return bugs
+
+def get_partial_bugs(tests):
+    bugs = {}
+    for tname, df in tests.items():
+        if df.ret_code.any() and not df.ret_code.all():
+            bugs[tname] = df
+    return bugs
+
+def main() -> None:
+    '''
+    Parse arguments and call the main drivers.
+    '''
+
+    args = get_args()
+    assert args.input.exists(), 'Cannot read non-existent results!'
+
+    trace = load_trace(args.input)
+
+    stores = load_stores(args.input)
+
+    if trace is not None:
+        flushes = trace[trace['event_type'] == 'FLUSH']
+        fences = trace[trace['event_type'] == 'FENCE']
+
+        def get_event_id(store_id):
+            return trace[trace['store_id'] == store_id]
+
+        def find_lines(df, file, fn):
+            lines = []
+            if file is None and fn is None:
+                print('Must specify at least one of: file, fn')
+                return
+
+            for e in df.iloc:
+                # print(store.index)
+                fn_idxs = [f for f in e.index if 'function' in f]
+                file_idxs = [f for f in e.index if 'file' in f]
+                ln_idxs = [l for l in e.index if 'line' in l]
+
+                # print(fn_idxs, ln_idxs, file_idxs)
+
+                for fl, f, line in zip(file_idxs, fn_idxs, ln_idxs):
+                    file_eq = lambda: file is None or file in str(e[fl])
+                    fn_eq = lambda: fn is None or fn in str(e[f])
+                    if file_eq() and fn_eq() and e[line] != float('NaN'):
+                        lines += [ int(e[line]) ]
+            return lines
+
+        def find_event(df, file, fn, line):
+            if file is None and fn is None and line is None:
+                print('Must specify at least one of: file, fn, line')
+                return
+
+            for e in df.iloc:
+                # print(store.index)
+                fn_idxs = [f for f in e.index if 'function' in f]
+                ln_idxs = [l for l in e.index if 'line' in l]
+                file_idxs = [f for f in e.index if 'file' in f]
+
+                # print(fn_idxs, ln_idxs, file_idxs)
+
+                for fl, f, l in zip(file_idxs, fn_idxs, ln_idxs):
+                    file_eq = lambda: file is None or file in str(e[fl])
+                    fn_eq = lambda: fn is None or fn in str(e[f])
+                    l_eq = lambda: line is None or (e[l] is not float('NaN') and line == int(e[l]))
+                    if file_eq() and fn_eq() and l_eq():
+                        print(f'{e.timestamp = } ({e[f]} @ {e[fl]}:{e[l]})')
+
+        def find_flush(file=None, fn=None, line=None):
+            '''
+            Find a specific flush in the trace.
+
+            Args (all keywords):
+            - file: report stores that have this file name in their stack frames
+            - fn: report stores that have this function name in their stack frames
+            - line: report stores that have this line number in their stack frames
+
+            Using multiple shows the intersection (i.e., AND).
+            '''
+            find_event(flushes, file, fn, line)
+
+        def find_fence(file=None, fn=None, line=None):
+            '''
+            Find a specific flush in the trace.
+
+            Args (all keywords):
+            - file: report stores that have this file name in their stack frames
+            - fn: report stores that have this function name in their stack frames
+            - line: report stores that have this line number in their stack frames
+
+            Using multiple shows the intersection (i.e., AND).
+            '''
+            find_event(fences, file, fn, line)
+
+    tests = load_tests(args.input)
+
+    bugs = get_bugs(tests)
+
+    partial_bugs = get_partial_bugs(tests)
+
+    def find_location(file=None, fn=None, line=None, bugs_only=False, show_all=False, output_file=None):
+        '''
+        Find a specific location amongst tests and bugs.
+
+        Args (all keywords):
+        - file: report stores that have this file name in their stack frames
+        - fn: report stores that have this function name in their stack frames
+        - line: report stores that have this line number in their stack frames
+
+        - bugs_only: only report bug locations.
+        - show_all: show stores not in any tests.
+        - output_file: save output to file
+
+        Using multiple shows the intersection (i.e., AND).
+        '''
+        if file is None and fn is None and line is None:
+            print('Must specify at least one of: file, fn, line')
+            return
+        def output(msg):
+            if output_file is None:
+                print(msg)
+            else:
+                with open(output_file, 'a') as f:
+                    print(msg, file=f)
+        for idx in reversed(stores.index):
+            lines = []
+            store = stores.iloc[idx]
+            # print(store.index)
+            fn_idxs = [f for f in store.index if 'function' in f]
+            ln_idxs = [l for l in store.index if 'line' in l]
+            file_idxs = [f for f in store.index if 'file' in f]
+
+            # print(fn_idxs, ln_idxs, file_idxs)
+
+            for fl, f, l in zip(file_idxs, fn_idxs, ln_idxs):
+                if store[fl] == float('NaN') or store[f] == float('NaN') or store[l] == float('NaN'):
+                    break
+
+                file_eq = lambda: file is None or file in str(store[fl])
+                fn_eq = lambda: fn is None or fn in str(store[f])
+                l_eq = lambda: line is None or (store[l] is not float('NaN') and line == int(store[l]))
+                if file_eq() and fn_eq() and l_eq():
+                    lines += [line]
+                    test_ids = []
+                    bug_ids = []
+                    # find in tests
+                    store_in_df = lambda df: str(store.store_id) in df.columns
+                    #  or \
+                    #         f'delta debugging store: {store.store_id}' in list(df.message.unique())
+                    for test_id, df in tests.items():
+                        if store_in_df(df):
+                            test_ids += [test_id]
+                    for bug_id, df in bugs.items():
+                        if store_in_df(df):
+                            bug_ids += [bug_id]
+
+                    if show_all:
+                        output(f'{store.store_id = } ({store[f]} @ {store[fl]}:{store[l]})')
+                        if test_ids:
+                            output(f'\tin tests {", ".join(test_ids)}')
+                        else:
+                            output(f'\tnot in any tests')
+                        if bug_ids:
+                            output(f'\tin bugs {", ".join(bug_ids)}')
+                        else:
+                            output(f'\tnot in any bugs')
+                    elif test_ids and not bugs_only:
+                        output(f'{store.store_id = } ({store[f]} @ {store[fl]}:{store[l]})')
+                        output(f'\tin tests {", ".join(test_ids)}')
+                        if bug_ids:
+                            output(f'\tin bugs {", ".join(bug_ids)}')
+                        else:
+                            output(f'\tnot in any bugs')
+
+                    elif bugs_only and bug_ids:
+                        output(f'{store.store_id = } ({store[f]} @ {store[fl]}:{store[l]})')
+                        output(f'\tin bugs {", ".join(bug_ids)}')
+    
+    def batched_find_location(bug_loc_file=None, bugs_only=False, show_all=False, output_file=None):
+        """
+        Find all stores and bugs that contain the locations in the bug_log_file.
+
+        Args:
+        - bug_loc_file: path to the bug log file, each line in the format of (target_name, bug_id, file:line)
+        - bugs_only: only report bug locations.
+        - show_all: show stores not in any tests.
+        """
+        if bug_loc_file is None:
+            print('Must specify bug_loc_file')
+            return
+
+        def output(msg):
+            if output_file is None:
+                print(msg)
+            else:
+                with open(output_file, 'a') as f:
+                    f.write(msg + '\n')
+
+        with open(bug_loc_file, 'r') as f:
+            for line in f:
+                target_name, bug_id, loc = line.split(",")
+                output(f"target_name: {target_name}, bug_id: {bug_id}, loc: {loc}")
+                file, line = loc.split(':')
+                find_location(file=file, line=int(line), bugs_only=bugs_only, show_all=show_all, output_file=output_file)
+    
+
+        
+
+    def show_bug_stack():
+    
+        bug_lines = []
+
+        store = stores.iloc[0]
+        # print(store.index)
+        fn_idxs = [f for f in store.index if 'function' in f]
+        ln_idxs = [l for l in store.index if 'line' in l]
+        file_idxs = [f for f in store.index if 'file' in f]
+
+        for idx in reversed(stores.index):
+            store = stores.iloc[idx]
+            # print(store.index)
+
+            store_in_df = lambda df: str(store.store_id) in df.columns
+
+            bug_ids = []
+            for bug_id, df in bugs.items():
+                if store_in_df(df):
+                    bug_ids += [bug_id]
+
+            if bug_ids:
+                bug_lines.append(idx)
+
+        for line in bug_lines:
+            print("store_id: {}".format(stores.iloc[line].store_id))
+            print("stack:")
+            for item in zip(fn_idxs, file_idxs, ln_idxs):
+                if (pd.isnull(stores.iloc[line][item[0]]) or pd.isnull(stores.iloc[line][item[1]]) or pd.isnull(stores.iloc[line][item[2]])):
+                    print("\n")
+                    break
+                print("{} @ {}:{}".format(stores.iloc[line][item[0]], stores.iloc[line][item[1]], stores.iloc[line][item[2]]))
+
+    def exclude_bug_locations(locations, verbose=False):
+        '''
+        Print all bug keys for bugs that have stores not containing the specified location(s)
+
+        Args:
+        -locations: an list of objects containing the following structure:
+        [
+            {
+                "file": string file name,
+                "line": int line number
+            },
+            ...
+        ]
+        -verbose: print output after each loop iteration
+
+        Example:
+        exclude_bug_locations([{"file": "server.c", "line":4013}], verbose=True)
+        '''
+        bug_ids = set()
+
+        for store in stores.iloc:
+            ln_idxs = [l for l in store.index if 'line' in l]
+            file_idxs = [f for f in store.index if 'file' in f]
+            fn_idxs = [f for f in store.index if 'function' in f]
+
+            # track if the store contains this location
+            good = True
+
+            for fl, f, l in zip(file_idxs, fn_idxs, ln_idxs):
+                def contains_location():
+                    for loc in locations:
+                        has_file = loc["file"] in str(store[fl])
+                        has_line = not pd.isna(store[l]) and loc["line"] == int(store[l])
+
+                        if has_file and has_line:
+                            return True
+                    return False
+
+
+                if contains_location():
+                    good = False
+                    break
+
+            if good:
+                # find in bugs
+                store_in_df = lambda df: str(store.store_id) in df.columns or \
+                        f'delta debugging store: {store.store_id}' in list(df.message.unique())
+                for bug_id, df in bugs.items():
+                    if store_in_df(df):
+                        bug_ids.add(bug_id)
+
+            if verbose:
+                print(f"Found bugs: {bug_ids}")
+
+        print(f'\nThe following bugs did not contain the specified locations: {bug_ids}')
+
+    def buggy_lines(file):
+        lines = defaultdict(set)
+        store_ids = defaultdict(set)
+        for store in stores.iloc:
+            file_idxs = [f for f in store.index if 'file' in f]
+            ln_idxs = [l for l in store.index if 'line' in l]
+
+            # print(fn_idxs, ln_idxs, file_idxs)
+
+            for f, l in zip(file_idxs, ln_idxs):
+                file_eq = lambda: file is None or file in str(store[f])
+                if file_eq():
+                    bug_ids = []
+                    # find in tests
+                    store_in_df = lambda df: str(store.store_id) in df.columns or \
+                            f'delta debugging store: {store.store_id}' in df.message.unique()
+                    for bug_id, df in bugs.items():
+                        if store_in_df(df):
+                            lines[store[l]].add(bug_id)
+                            store_ids[l].add(str(store.store_id))
+
+        for line, bug_ids in lines.items():
+            print(f'{file}:{line}')
+            print(f'\tstores: {", ".join(store_ids[line])}')
+            print(f'\tbugs: {", ".join(bug_ids)}')
+
+
+    msg = ''
+    msg += f'Helper Functions:\n\n'
+    msg += f'\t{find_location.__name__}:\n{indent(find_location.__doc__, prefix=" "*4)}'
+
+    msg += f'\n\nVariables:\n`trace`, `stores`, `tests`, `bugs`\n\n'
+    msg += f'\t\tntests = {len(tests)}; nbugs = {len(bugs)}\n'
+
+    # norderings
+    norderings = 0
+    for k, df in tests.items():
+        norderings += len(df)
+
+    msg += f'\n\t\tnorderings = {norderings}\n'
+
+    embed(header=msg)
+
+
+if __name__ == "__main__":
+    main()

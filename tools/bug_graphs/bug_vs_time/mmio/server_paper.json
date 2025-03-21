@@ -1,0 +1,88 @@
+{
+    "title": "",
+    "mins": 240,
+    "max_bugs": 6,
+    "lines": [
+        {
+            "label": "Tʀɪᴍ",
+            "color": "tab:blue",
+            "linestyle": "solid",
+            "total_bugs_over_time": { "299": 3, "325": 5, "588": 6, "1076": 6, "256": 3, "5147": 6, "51": 0, "97": 2, "272": 3 },
+            "targets": [
+                {
+                    "output_path": "/data/storage/squint/results/release/memcached/memcached_res_rep",
+                    "bug_locations": "memcached"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/redis/redis_res_rep",
+                    "bug_locations": "redis"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/hse/hse_res_rep",
+                    "bug_locations": "hse"
+                }
+
+            ]
+        },
+        {
+            "label": "Random",
+            "color": "tab:orange",
+            "linestyle": "dotted",
+            "total_bugs_over_time": { "272": 1, "1188": 3, "3897": 4, "233": 0, "258": 1, "14697": 4, "68": 0, "688": 2, "2655": 4, "3666": 4 },
+            "targets": [
+                {
+                    "output_path": "/data/storage/squint/results/release/memcached/memcached_res_random",
+                    "bug_locations": "memcached"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/redis/redis_res_random",
+                    "bug_locations": "redis"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/hse/hse_res_random",
+                    "bug_locations": "hse"
+                }
+            ]
+        },
+        {
+            "label": "Linear",
+            "color": "tab:green",
+            "linestyle": "dashed",
+            "total_bugs_over_time": { "234": 0, "235": 3, "3835": 6, "223": 0, "251": 4, "14637": 6, "48": 0, "450": 6, "860": 6 },
+            "targets": [
+                {
+                    "output_path": "/data/storage/squint/results/release/memcached/memcached_res_linear",
+                    "bug_locations": "memcached"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/redis/redis_res_linear",
+                    "bug_locations": "redis"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/hse/hse_res_linear",
+                    "bug_locations": "hse"
+                }
+            ]
+        },
+        {
+            "label": "Exhaustive",
+            "color": "tab:red",
+            "linestyle": "dashdot",
+            "total_bugs_over_time": { "234": 0, "235": 3, "3903": 4, "221": 0, "249": 4, "14641": 4, "49": 0, "3673": 4 },
+            "targets": [
+                {
+                    "output_path": "/data/storage/squint/results/release/memcached/memcached_res_exhaust",
+                    "bug_locations": "memcached"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/redis/redis_res_exhaust",
+                    "bug_locations": "redis"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/hse/hse_res_exhaust",
+                    "bug_locations": "hse"
+                }
+            ]
+        }
+    ]
+}

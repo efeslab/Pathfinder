@@ -1,0 +1,69 @@
+#! /usr/bin/env python3
+
+from argparse import ArgumentParser
+from pathlib import Path
+from IPython import embed
+import pandas as pd
+
+def count_orderings(d):
+    return 2 ** len(d)
+
+def cacheline(row):
+    return row.address % 64
+
+def count_exhaustive(df):
+    norderings = 0
+    # CL => status (dirty, flushed)
+    transient_dict = {}
+    has_flushed = False
+    new_updates = False
+
+    # At each "flush" type event, count the orderings, then do the prescribed op.
+    for row in df.iloc:
+        if row.event_type == 'STORE':
+            cl = cacheline(row)
+            if cl in transient_dict:
+                norderings += count_orderings(transient_dict)
+            transient_dict[cl] = 'dirty'
+            new_updates = True
+        if row.event_type == 'FLUSH':
+            cl = cacheline(row)
+            transient_dict[cl] = 'flushed'
+            has_flushed = True
+        if row.event_type == 'FENCE' and has_flushed and new_updates:
+            new_updates = False
+            has_flushed = False
+            norderings += count_orderings(transient_dict)
+            new_dict = {}
+            for cl, status in transient_dict.items():
+                if status == 'dirty':
+                    new_dict[cl] = status
+            transient_dict = new_dict
+
+    norderings += count_orderings(transient_dict)
+
+    return norderings
+
+
+def main():
+    parser = ArgumentParser('Compute the number of orderings')
+
+    parser.add_argument('results_dir', type=Path)
+
+    args = parser.parse_args()
+    assert args.results_dir.exists(), f'{args.results_dir} does not exist!'
+    trace_file = args.results_dir / 'full_trace.csv'
+    assert trace_file.exists(), f'{trace_file} does not exist!'
+
+    df = pd.read_csv(trace_file)
+
+    stores = df['event_type'] == 'STORE'
+    linear_orderings = stores.sum()
+
+    exhaustive_orderings = count_exhaustive(df)
+
+    print(f'{linear_orderings = }, {exhaustive_orderings = } ({exhaustive_orderings:e})')
+
+
+if __name__ == '__main__':
+    exit(main())

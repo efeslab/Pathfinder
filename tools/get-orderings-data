@@ -1,0 +1,167 @@
+#! /usr/bin/env python3
+
+from argparse import ArgumentParser, FileType
+from collections import defaultdict
+from pathlib import Path
+from IPython import embed
+import json
+import csv
+import pandas as pd
+
+this_dir = Path(__file__).absolute().parent
+bug_graphs_dir = this_dir / 'bug_graphs'
+
+def get_csv_reader(fp):
+    return csv.reader( (line.replace('\0','') for line in fp) )
+
+def get_ntests(input_dir: Path):
+    import re
+    fname_rgx = re.compile(r'\d+_\d+\.csv')
+
+    ntests = 0
+    for f in input_dir.iterdir():
+        if f.name in ['events.csv', 'full_trace.csv', 'info.txt', 'groups.csv']:
+            continue
+        matches = fname_rgx.match(f.name)
+        # assert matches is not None
+        if matches is None:
+            continue
+
+        # number of tests is number of CSV rows minus header
+        with f.open() as fp:
+            reader = get_csv_reader(fp)
+            ntests += sum(1 for row in reader) - 1
+
+    return ntests
+
+def event_type(row):
+    return row[1]
+
+def cacheline(row):
+    return int(row[3]) % 64
+
+def count_linear(results_dir):
+    trace_file = results_dir / 'full_trace.csv'
+    assert trace_file.exists(), f'{trace_file} does not exist!'
+
+    nstores = 0
+    with trace_file.open() as f:
+        reader = get_csv_reader(f)
+        for row in reader:
+            if event_type(row) == 'STORE':
+                nstores += 1
+
+    # df = pd.read_csv(trace_file)
+    # stores = df['event_type'] == 'STORE'
+    # linear_orderings = stores.sum()
+
+    linear_orderings = nstores
+    return linear_orderings
+
+def count_orderings(d):
+    return 2 ** len(d)
+
+def count_exhaustive(results_dir):
+    trace_file = results_dir / 'full_trace.csv'
+    assert trace_file.exists(), f'{trace_file} does not exist!'
+
+    # df = pd.read_csv(trace_file)
+
+    norderings = 0
+    # CL => status (dirty, flushed)
+    transient_dict = {}
+    has_flushed = False
+    new_updates = False
+
+    # At each "flush" type event, count the orderings, then do the prescribed op.
+    with trace_file.open() as f:
+        reader = get_csv_reader(f)
+        for i, row in enumerate(reader):
+            if event_type(row) == 'STORE':
+                cl = cacheline(row)
+                # if cl in transient_dict:
+                #     norderings += count_orderings(transient_dict)
+                transient_dict[cl] = 'dirty'
+                new_updates = True
+            if event_type(row) == 'FLUSH':
+                cl = cacheline(row)
+                transient_dict[cl] = 'flushed'
+                has_flushed = True
+            if event_type(row) == 'FENCE' and has_flushed and new_updates:
+                new_updates = False
+                has_flushed = False
+                norderings += count_orderings(transient_dict)
+                new_dict = {}
+                for cl, status in transient_dict.items():
+                    if status == 'dirty':
+                        new_dict[cl] = status
+                transient_dict = new_dict
+                print(f'Op {i+1}: {norderings = }')
+
+    norderings += count_orderings(transient_dict)
+
+    return norderings
+
+squint_label = 'Tʀɪᴍ'
+
+def table(config):
+    actual = defaultdict(int)
+    worst_case = defaultdict(int)
+    for line in config['lines']:
+        label = line['label']
+        for target in line['targets']:
+            dirpath = Path(target['output_path'])
+            if not dirpath.exists():
+                print(f'Could not find results for {label}: {str(dirpath)}')
+                continue
+
+            tested_orderings = get_ntests(dirpath)
+            print(f'{tested_orderings} for {str(dirpath)}')
+            actual[label] += tested_orderings
+
+            if label in ['Random', 'Exhaustive']:
+                worst_case[label] += count_exhaustive(dirpath)
+            elif label == 'Linear':
+                worst_case[label] += count_linear(dirpath)
+            else:
+                worst_case[label] += tested_orderings
+
+    df = pd.DataFrame({'actual': actual, 'worst_case': worst_case})
+    df['actual_reduction'] = df['actual'] / df['actual'][squint_label]
+    df['worst_case_reduction'] = df['worst_case'] / df['worst_case'][squint_label]
+
+    return df
+
+def main():
+
+    parser = ArgumentParser('Compute the number of orderings tested and theoretical orderings')
+    parser.add_argument('--pmdk', type=FileType('r'), default=(bug_graphs_dir / 'pmdk_paper.json').open())
+    parser.add_argument('--kvi', type=FileType('r'), default=(bug_graphs_dir / 'kvi_paper.json').open())
+    parser.add_argument('--recipe', type=FileType('r'), default=(bug_graphs_dir / 'recipe_paper.json').open())
+    parser.add_argument('--server', type=FileType('r'), default=(bug_graphs_dir / 'server_paper.json').open())
+    parser.add_argument('--output-file', default='state_reduction.csv')
+
+    args = parser.parse_args()
+
+    pmdk_config = json.load(args.pmdk)
+    kvi_config = json.load(args.kvi)
+    recipe_config = json.load(args.recipe)
+    server_config = json.load(args.server)
+
+    pmdk_df = table(pmdk_config)
+    pmdk_df['target'] = 'pmdk'
+
+    kvi_df = table(kvi_config)
+    kvi_df['target'] = 'kvi'
+
+    recipe_df = table(recipe_config)
+    recipe_df['target'] = 'recipe'
+
+    server_df = table(server_config)
+    server_df['target'] = 'server'
+
+    final_df = pd.concat([pmdk_df, kvi_df, recipe_df, server_df]).reset_index()
+    final_df.to_csv(args.output_file)
+
+if __name__ == '__main__':
+    exit(main())

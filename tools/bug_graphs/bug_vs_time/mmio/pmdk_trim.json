@@ -1,0 +1,41 @@
+{
+    "title": "PMDK Targets",
+    "mins": 20,
+    "lines": [
+        {
+            "label": "Tʀɪᴍ",
+            "color": "tab:blue",
+            "linestyle": "solid",
+            "targets": [
+                {
+                    "output_path": "/data/storage/squint/results/release/pmdk_hashmap_atomic_v1.4/pmdk_hashmap_atomic_v1.4_res_rep",
+                    "bug_locations": "pmdk_hashmap_atomic_v1.4"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/pmdk_array_v1.4/pmdk_array_v1.4_res_rep",
+                    "bug_locations": "pmdk_array_v1.4"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/pmdk_array_v1.4/pmdk_array_v1.4_res_free_rep",
+                    "bug_locations": "pmdk_array_v1.4"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/pmdk_array_v1.4/pmdk_array_v1.4_res_realloc_rep",
+                    "bug_locations": "pmdk_array_v1.4"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/pmdk_array_v1.4/pmdk_array_v1.4_res_toid_rep",
+                    "bug_locations": "pmdk_array_v1.4"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/pmdk_btree_v1.4/pmdk_btree_res_rep",
+                    "bug_locations": "pmdk_btree_v1.4"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/pmdk_rbtree_v1.4/pmdk_rbtree_v1.4_res_rep",
+                    "bug_locations": "pmdk_rbtree"
+                }
+            ]
+        }
+    ]
+}

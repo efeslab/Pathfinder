@@ -1,0 +1,16 @@
+{
+    "title": "Key-Value Indices",
+    "mins": 250,
+    "lines": [
+        {
+            "label": "Squint-Rep",
+            "color": "tab:blue",
+            "targets": [
+                {
+                    "output_path": "/data/storage/squint/results/release/woart/woart_res_rep",
+                    "bug_locations": "woart"
+                }
+            ]
+        }
+    ]
+}

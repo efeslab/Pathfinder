@@ -1,0 +1,95 @@
+{
+    "title": "Server Applications",
+    "mins": 240,
+    "lines": [
+        {
+            "label": "Squint-Rep",
+            "color": "tab:blue",
+            "targets": [
+                {
+                    "output_path": "/data/storage/squint/results/release/memcached/memcached_res_rep",
+                    "bug_locations": "memcached"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/redis/redis_res_rep",
+                    "bug_locations": "redis"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/hse/hse_res_rep",
+                    "bug_locations": "hse_v1"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/hse_rollback/hse_res_rollback_rep",
+                    "bug_locations": "hse_v2"
+                }
+
+            ]
+        },
+        {
+            "label": "Random",
+            "color": "blueviolet",
+            "targets": [
+                {
+                    "output_path": "/data/storage/squint/results/release/memcached/memcached_res_random",
+                    "bug_locations": "memcached"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/redis/redis_res_random",
+                    "bug_locations": "redis"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/hse/hse_res_random",
+                    "bug_locations": "hse_v1"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/hse_rollback/hse_res_rollback_random",
+                    "bug_locations": "hse_v2"
+                }
+            ]
+        },
+        {
+            "label": "Linear",
+            "color": "tab:green",
+            "targets": [
+                {
+                    "output_path": "/data/storage/squint/results/release/memcached/memcached_res_linear",
+                    "bug_locations": "memcached"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/redis/redis_res_linear",
+                    "bug_locations": "redis"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/hse/hse_res_linear",
+                    "bug_locations": "hse_v1"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/hse_rollback/hse_res_rollback_linear",
+                    "bug_locations": "hse_v2"
+                }
+            ]
+        },
+        {
+            "label": "Exhaustive",
+            "color": "tab:red",
+            "targets": [
+                {
+                    "output_path": "/data/storage/squint/results/release/memcached/memcached_res_exhaust",
+                    "bug_locations": "memcached"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/redis/redis_res_exhaust",
+                    "bug_locations": "redis"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/hse/hse_res_exhaust",
+                    "bug_locations": "hse_v1"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/hse_rollback/hse_res_rollback_exhaust",
+                    "bug_locations": "hse_v2"
+                }
+            ]
+        }
+    ]
+}

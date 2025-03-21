@@ -1,0 +1,78 @@
+{
+    "title": "Key-Value Indices",
+    "mins": 250,
+    "lines": [
+        {
+            "label": "Squint-Rep",
+            "color": "tab:blue",
+            "targets": [
+                {
+                    "output_path": "/data/storage/squint/results/release/cceh/cceh_res_rep",
+                    "bug_locations": "cceh"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/FAST_FAIR/FAST_FAIR_res_rep",
+                    "bug_locations": "fast_fair"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/wort/wort_res_rep",
+                    "bug_locations": "wort"
+                }
+            ]
+        },
+        {
+            "label": "Random",
+            "color": "blueviolet",
+            "targets": [
+                {
+                    "output_path": "/data/storage/squint/results/release/cceh/cceh_res_random",
+                    "bug_locations": "cceh"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/FAST_FAIR/FAST_FAIR_res_random",
+                    "bug_locations": "fast_fair"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/wort/wort_res_random",
+                    "bug_locations": "wort"
+                }
+            ]
+        },
+        {
+            "label": "Linear",
+            "color": "tab:green",
+            "targets": [
+                {
+                    "output_path": "/data/storage/squint/results/release/cceh/cceh_res_linear",
+                    "bug_locations": "cceh"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/FAST_FAIR/FAST_FAIR_res_linear",
+                    "bug_locations": "fast_fair"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/wort/wort_res_linear",
+                    "bug_locations": "wort"
+                }
+            ]
+        },
+        {
+            "label": "Exhaustive",
+            "color": "tab:red",
+            "targets": [
+                {
+                    "output_path": "/data/storage/squint/results/release/cceh/cceh_res_exhaust",
+                    "bug_locations": "cceh"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/FAST_FAIR/FAST_FAIR_res_exhaust",
+                    "bug_locations": "fast_fair"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/wort/wort_res_exhaust",
+                    "bug_locations": "wort"
+                }
+            ]
+        }
+    ]
+}

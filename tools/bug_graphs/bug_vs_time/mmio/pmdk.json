@@ -1,0 +1,116 @@
+{
+    "title": "PMDK Targets",
+    "mins": 20,
+    "lines": [
+        {
+            "label": "Squint-Rep",
+            "color": "tab:blue",
+            "targets": [
+                {
+                    "output_path": "/data/storage/squint/results/release/pmdk_hashmap_atomic_v1.4/pmdk_hashmap_atomic_v1.4_res_rep",
+                    "bug_locations": "pmdk_hashmap_atomic_v1.4"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/pmdk_array_v1.4/pmdk_array_v1.4_res_rep",
+                    "bug_locations": "pmdk_array_v1.4"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/pmdk_btree_v1.4/pmdk_btree_res_rep",
+                    "bug_locations": "pmdk_btree_v1.4"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/pmdk_rbtree_v1.4/pmdk_rbtree_v1.4_res_rep",
+                    "bug_locations": "pmdk_rbtree"
+                }
+            ]
+        },
+        {
+            "label": "Squint-Induced",
+            "color": "tab:orange",
+            "targets": [
+                {
+                    "output_path": "/data/storage/squint/results/release/pmdk_hashmap_atomic_v1.4/pmdk_hashmap_atomic_v1.4_res_induced_subgraph",
+                    "bug_locations": "pmdk_hashmap_atomic_v1.4"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/pmdk_array_v1.4/pmdk_array_v1.4_res_induced_subgraph",
+                    "bug_locations": "pmdk_array_v1.4"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/pmdk_btree_v1.4/pmdk_btree_res_induced_subgraph",
+                    "bug_locations": "pmdk_btree_v1.4"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/pmdk_rbtree_v1.4/pmdk_rbtree_v1.4_res_induced_subgraph",
+                    "bug_locations": "pmdk_rbtree"
+                }
+            ]
+        },
+        {
+            "label": "Random",
+            "color": "blueviolet",
+            "targets": [
+                {
+                    "output_path": "/data/storage/squint/results/release/pmdk_hashmap_atomic_v1.4/pmdk_hashmap_atomic_v1.4_res_random",
+                    "bug_locations": "pmdk_hashmap_atomic_v1.4"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/pmdk_array_v1.4/pmdk_array_v1.4_res_random",
+                    "bug_locations": "pmdk_array_v1.4"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/pmdk_btree_v1.4/pmdk_btree_res_random",
+                    "bug_locations": "pmdk_btree_v1.4"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/pmdk_rbtree_v1.4/pmdk_rbtree_v1.4_res_random",
+                    "bug_locations": "pmdk_rbtree"
+                }
+            ]
+        },
+        {
+            "label": "Linear",
+            "color": "tab:green",
+            "targets": [
+                {
+                    "output_path": "/data/storage/squint/results/release/pmdk_hashmap_atomic_v1.4/pmdk_hashmap_atomic_v1.4_res_linear",
+                    "bug_locations": "pmdk_hashmap_atomic_v1.4"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/pmdk_array_v1.4/pmdk_array_v1.4_res_linear",
+                    "bug_locations": "pmdk_array_v1.4"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/pmdk_btree_v1.4/pmdk_btree_res_linear",
+                    "bug_locations": "pmdk_btree_v1.4"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/pmdk_rbtree_v1.4/pmdk_rbtree_v1.4_res_linear",
+                    "bug_locations": "pmdk_rbtree"
+                }
+            ]
+        },
+        {
+            "label": "Exhaustive",
+            "color": "tab:red",
+            "targets": [
+                {
+                    "output_path": "/data/storage/squint/results/release/pmdk_hashmap_atomic_v1.4/pmdk_hashmap_atomic_v1.4_res_exhaust",
+                    "bug_locations": "pmdk_hashmap_atomic_v1.4"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/pmdk_array_v1.4/pmdk_array_v1.4_res_exhaust",
+                    "bug_locations": "pmdk_array_v1.4"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/pmdk_btree_v1.4/pmdk_btree_res_exhaust",
+                    "bug_locations": "pmdk_btree_v1.4"
+                },
+                {
+                    "output_path": "/data/storage/squint/results/release/pmdk_rbtree_v1.4/pmdk_rbtree_v1.4_res_exhaust",
+                    "bug_locations": "pmdk_rbtree"
+                }
+            ]
+        }
+    ]
+}

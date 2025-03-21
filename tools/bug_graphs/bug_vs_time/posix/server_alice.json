@@ -1,0 +1,4 @@
+{"leveldb": {"total": {"0": 6, "1": 300}, "last_timestamp": 303}, 
+"rocksdb": {"total": {}, "last_timestamp": 10800},
+"wiredtiger": {"total": {}, "last_timestamp": 10800}
+}
