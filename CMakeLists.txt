@@ -78,8 +78,6 @@ add_subdirectory(cmake)
 
 add_subdirectory(deps)
 add_subdirectory(pathfinder)
-add_subdirectory(tests)
-add_subdirectory(tools)
 
 # All the benchmarks
 # add_subdirectory(targets)
