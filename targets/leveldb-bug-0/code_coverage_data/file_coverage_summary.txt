@@ -1,0 +1,358 @@
+Collecting coverage data at Fri Dec 27 06:44:52 AM UTC 2024
+Reading tracefile /home/yilegu/squint/pm-cc-bug-finder/targets/leveldb-bug-0/code_coverage/filtered_coverage.info
+Coverage data collected.
+Collecting coverage data at Fri Dec 27 06:44:53 AM UTC 2024
+Reading tracefile /home/yilegu/squint/pm-cc-bug-finder/targets/leveldb-bug-0/code_coverage/filtered_coverage.info
+                                       |Lines       |Functions  |Branches    
+Filename                               |Rate     Num|Rate    Num|Rate     Num
+=============================================================================
+[/home/yilegu/squint/bug_study/leveldb-0/leveldb-before/]
+db/builder.cc                          | 0.0%     38| 0.0%     1|    -      0
+db/db_impl.cc                          |31.5%    934|42.9%    56|    -      0
+db/db_impl.h                           |37.5%      8|66.7%     3|    -      0
+db/db_iter.cc                          |18.7%    155|47.4%    19|    -      0
+db/dbformat.cc                         | 5.0%     80| 8.3%    12|    -      0
+db/dbformat.h                          |18.4%     38|27.8%    18|    -      0
+db/filename.cc                         |80.0%     70|83.3%    12|    -      0
+db/log_reader.cc                       |43.0%    151|50.0%    10|    -      0
+db/log_writer.cc                       |78.9%     57|83.3%     6|    -      0
+db/memtable.cc                         |52.9%     68|61.9%    21|    -      0
+db/memtable.h                          | 100%      8| 100%     3|    -      0
+db/skiplist.h                          |62.6%    115|65.2%    23|    -      0
+db/snapshot.h                          |20.7%     29|25.0%     8|    -      0
+db/table_cache.cc                      |10.0%     70|25.0%     8|    -      0
+db/version_edit.cc                     |40.1%    162|50.0%     6|    -      0
+db/version_edit.h                      |62.2%     37|72.7%    11|    -      0
+db/version_set.cc                      |29.2%    870|27.6%    76|    -      0
+db/version_set.h                       |71.0%     31|60.0%    15|    -      0
+db/write_batch.cc                      |61.4%     83|63.2%    19|    -      0
+db/write_batch_internal.h              | 100%      2| 100%     2|    -      0
+include/leveldb/cache.h                |50.0%      2|50.0%     2|    -      0
+include/leveldb/db.h                   | 100%      1| 100%     1|    -      0
+include/leveldb/env.h                  | 9.5%     42|16.7%    24|    -      0
+include/leveldb/iterator.h             | 100%      5| 100%     2|    -      0
+include/leveldb/options.h              | 0.0%      2| 0.0%     2|    -      0
+include/leveldb/slice.h                |85.7%     35|93.3%    15|    -      0
+include/leveldb/status.h               |34.5%     29|40.0%    15|    -      0
+include/leveldb/table.h                | 0.0%      1| 0.0%     1|    -      0
+include/leveldb/table_builder.h        | 0.0%      1| 0.0%     1|    -      0
+port/port_stdcxx.h                     |33.3%     24|53.8%    13|    -      0
+table/block.cc                         | 0.0%    147| 0.0%    21|    -      0
+table/block.h                          | 0.0%      1| 0.0%     1|    -      0
+table/block_builder.cc                 | 0.0%     46| 0.0%     5|    -      0
+table/block_builder.h                  | 0.0%      1| 0.0%     1|    -      0
+table/filter_block.cc                  | 0.0%     60| 0.0%     7|    -      0
+table/format.cc                        | 0.0%     88| 0.0%     5|    -      0
+table/format.h                         | 0.0%     11| 0.0%    10|    -      0
+table/iterator.cc                      |42.5%     40|16.7%    18|    -      0
+table/iterator_wrapper.h               | 0.0%     51| 0.0%    15|    -      0
+table/merger.cc                        | 5.1%     99| 6.7%    15|    -      0
+table/table.cc                         | 0.0%    152| 0.0%    12|    -      0
+table/table_builder.cc                 | 0.0%    149| 0.0%    13|    -      0
+table/two_level_iterator.cc            | 0.0%     84| 0.0%    18|    -      0
+util/arena.cc                          |93.9%     33| 100%     5|    -      0
+util/arena.h                           |90.0%     10| 100%     2|    -      0
+util/cache.cc                          |16.8%    197|28.9%    38|    -      0
+util/coding.cc                         |56.2%    105|78.6%    14|    -      0
+util/coding.h                          | 100%     41| 100%     5|    -      0
+util/comparator.cc                     |26.7%     30|62.5%     8|    -      0
+util/crc32c.cc                         |97.6%     42| 100%     4|    -      0
+util/crc32c.h                          | 100%      6| 100%     3|    -      0
+util/env.cc                            |72.2%     54|36.0%    25|    -      0
+util/env_posix.cc                      |47.0%    383|60.0%    70|    -      0
+util/filter_policy.cc                  | 100%      1|50.0%     2|    -      0
+util/hash.cc                           | 0.0%     22| 0.0%     1|    -      0
+util/logging.cc                        |41.0%     39|20.0%     5|    -      0
+util/mutexlock.h                       | 100%      4| 100%     2|    -      0
+util/no_destructor.h                   | 100%      5| 100%     2|    -      0
+util/options.cc                        | 100%      1| 100%     1|    -      0
+util/posix_logger.h                    |81.0%     42| 100%     4|    -      0
+util/random.h                          |81.8%     11| 100%     3|    -      0
+util/status.cc                         |49.0%     51|66.7%     3|    -      0
+=============================================================================
+                                 Total:|32.4%   5154|40.8%   743|    -      0
+Coverage data collected.
+Collecting coverage data at Fri Dec 27 06:44:57 AM UTC 2024
+Reading tracefile /home/yilegu/squint/pm-cc-bug-finder/targets/leveldb-bug-0/code_coverage/filtered_coverage.info
+                                       |Lines       |Functions  |Branches    
+Filename                               |Rate     Num|Rate    Num|Rate     Num
+=============================================================================
+[/home/yilegu/squint/bug_study/leveldb-0/leveldb-before/]
+db/builder.cc                          |92.1%     38| 100%     1|    -      0
+db/db_impl.cc                          |40.4%    934|48.2%    56|    -      0
+db/db_impl.h                           | 100%      8| 100%     3|    -      0
+db/db_iter.cc                          |18.7%    155|47.4%    19|    -      0
+db/dbformat.cc                         |13.8%     80|16.7%    12|    -      0
+db/dbformat.h                          |63.2%     38|55.6%    18|    -      0
+db/filename.cc                         |90.0%     70|91.7%    12|    -      0
+db/log_reader.cc                       |43.0%    151|50.0%    10|    -      0
+db/log_writer.cc                       |78.9%     57|83.3%     6|    -      0
+db/memtable.cc                         |60.3%     68|76.2%    21|    -      0
+db/memtable.h                          | 100%      8| 100%     3|    -      0
+db/skiplist.h                          |68.7%    115|73.9%    23|    -      0
+db/snapshot.h                          |20.7%     29|25.0%     8|    -      0
+db/table_cache.cc                      |61.4%     70|62.5%     8|    -      0
+db/version_edit.cc                     |46.9%    162|50.0%     6|    -      0
+db/version_edit.h                      |83.8%     37|81.8%    11|    -      0
+db/version_set.cc                      |29.3%    870|27.6%    76|    -      0
+db/version_set.h                       |71.0%     31|60.0%    15|    -      0
+db/write_batch.cc                      |66.3%     83|68.4%    19|    -      0
+db/write_batch_internal.h              | 100%      2| 100%     2|    -      0
+include/leveldb/cache.h                |50.0%      2|50.0%     2|    -      0
+include/leveldb/db.h                   | 100%      1| 100%     1|    -      0
+include/leveldb/env.h                  | 9.5%     42|16.7%    24|    -      0
+include/leveldb/iterator.h             | 100%      5| 100%     2|    -      0
+include/leveldb/options.h              |50.0%      2|50.0%     2|    -      0
+include/leveldb/slice.h                |85.7%     35|93.3%    15|    -      0
+include/leveldb/status.h               |44.8%     29|46.7%    15|    -      0
+include/leveldb/table.h                | 0.0%      1| 0.0%     1|    -      0
+include/leveldb/table_builder.h        | 0.0%      1| 0.0%     1|    -      0
+port/port_stdcxx.h                     |33.3%     24|53.8%    13|    -      0
+table/block.cc                         | 0.0%    147| 0.0%    21|    -      0
+table/block.h                          | 0.0%      1| 0.0%     1|    -      0
+table/block_builder.cc                 | 0.0%     46| 0.0%     5|    -      0
+table/block_builder.h                  | 0.0%      1| 0.0%     1|    -      0
+table/filter_block.cc                  | 0.0%     60| 0.0%     7|    -      0
+table/format.cc                        | 0.0%     88| 0.0%     5|    -      0
+table/format.h                         | 0.0%     11| 0.0%    10|    -      0
+table/iterator.cc                      |42.5%     40|16.7%    18|    -      0
+table/iterator_wrapper.h               | 0.0%     51| 0.0%    15|    -      0
+table/merger.cc                        | 5.1%     99| 6.7%    15|    -      0
+table/table.cc                         | 0.0%    152| 0.0%    12|    -      0
+table/table_builder.cc                 | 0.0%    149| 0.0%    13|    -      0
+table/two_level_iterator.cc            | 0.0%     84| 0.0%    18|    -      0
+util/arena.cc                          |93.9%     33| 100%     5|    -      0
+util/arena.h                           |90.0%     10| 100%     2|    -      0
+util/cache.cc                          |16.8%    197|28.9%    38|    -      0
+util/coding.cc                         |56.2%    105|78.6%    14|    -      0
+util/coding.h                          | 100%     41| 100%     5|    -      0
+util/comparator.cc                     |26.7%     30|62.5%     8|    -      0
+util/crc32c.cc                         |97.6%     42| 100%     4|    -      0
+util/crc32c.h                          | 100%      6| 100%     3|    -      0
+util/env.cc                            |72.2%     54|36.0%    25|    -      0
+util/env_posix.cc                      |47.0%    383|60.0%    70|    -      0
+util/filter_policy.cc                  | 100%      1|50.0%     2|    -      0
+util/hash.cc                           | 0.0%     22| 0.0%     1|    -      0
+util/logging.cc                        |41.0%     39|20.0%     5|    -      0
+util/mutexlock.h                       | 100%      4| 100%     2|    -      0
+util/no_destructor.h                   | 100%      5| 100%     2|    -      0
+util/options.cc                        | 100%      1| 100%     1|    -      0
+util/posix_logger.h                    |81.0%     42| 100%     4|    -      0
+util/random.h                          |81.8%     11| 100%     3|    -      0
+util/status.cc                         |49.0%     51|66.7%     3|    -      0
+=============================================================================
+                                 Total:|36.9%   5154|44.0%   743|    -      0
+Coverage data collected.
+Collecting coverage data at Fri Dec 27 06:45:01 AM UTC 2024
+Reading tracefile /home/yilegu/squint/pm-cc-bug-finder/targets/leveldb-bug-0/code_coverage/filtered_coverage.info
+                                       |Lines       |Functions  |Branches    
+Filename                               |Rate     Num|Rate    Num|Rate     Num
+=============================================================================
+[/home/yilegu/squint/bug_study/leveldb-0/leveldb-before/]
+db/builder.cc                          |92.1%     38| 100%     1|    -      0
+db/db_impl.cc                          |40.4%    934|48.2%    56|    -      0
+db/db_impl.h                           | 100%      8| 100%     3|    -      0
+db/db_iter.cc                          |44.5%    155|78.9%    19|    -      0
+db/dbformat.cc                         |13.8%     80|16.7%    12|    -      0
+db/dbformat.h                          |63.2%     38|55.6%    18|    -      0
+db/filename.cc                         |90.0%     70|91.7%    12|    -      0
+db/log_reader.cc                       |43.0%    151|50.0%    10|    -      0
+db/log_writer.cc                       |78.9%     57|83.3%     6|    -      0
+db/memtable.cc                         |60.3%     68|76.2%    21|    -      0
+db/memtable.h                          | 100%      8| 100%     3|    -      0
+db/skiplist.h                          |68.7%    115|73.9%    23|    -      0
+db/snapshot.h                          |20.7%     29|25.0%     8|    -      0
+db/table_cache.cc                      |61.4%     70|62.5%     8|    -      0
+db/version_edit.cc                     |46.9%    162|50.0%     6|    -      0
+db/version_edit.h                      |83.8%     37|81.8%    11|    -      0
+db/version_set.cc                      |32.5%    870|28.9%    76|    -      0
+db/version_set.h                       |71.0%     31|60.0%    15|    -      0
+db/write_batch.cc                      |66.3%     83|68.4%    19|    -      0
+db/write_batch_internal.h              | 100%      2| 100%     2|    -      0
+include/leveldb/cache.h                |50.0%      2|50.0%     2|    -      0
+include/leveldb/db.h                   | 100%      1| 100%     1|    -      0
+include/leveldb/env.h                  |11.9%     42|20.8%    24|    -      0
+include/leveldb/iterator.h             | 100%      5| 100%     2|    -      0
+include/leveldb/options.h              |50.0%      2|50.0%     2|    -      0
+include/leveldb/slice.h                |88.6%     35| 100%    15|    -      0
+include/leveldb/status.h               |44.8%     29|46.7%    15|    -      0
+include/leveldb/table.h                | 100%      1| 100%     1|    -      0
+include/leveldb/table_builder.h        | 100%      1| 100%     1|    -      0
+port/port_stdcxx.h                     |70.8%     24|76.9%    13|    -      0
+table/block.cc                         |54.4%    147|76.2%    21|    -      0
+table/block.h                          | 100%      1| 100%     1|    -      0
+table/block_builder.cc                 |93.5%     46| 100%     5|    -      0
+table/block_builder.h                  | 100%      1| 100%     1|    -      0
+table/filter_block.cc                  | 0.0%     60| 0.0%     7|    -      0
+table/format.cc                        |77.3%     88| 100%     5|    -      0
+table/format.h                         | 100%     11| 100%    10|    -      0
+table/iterator.cc                      |42.5%     40|16.7%    18|    -      0
+table/iterator_wrapper.h               |70.6%     51|80.0%    15|    -      0
+table/merger.cc                        |50.5%     99|73.3%    15|    -      0
+table/table.cc                         |47.4%    152|50.0%    12|    -      0
+table/table_builder.cc                 |76.5%    149|76.9%    13|    -      0
+table/two_level_iterator.cc            |67.9%     84|77.8%    18|    -      0
+util/arena.cc                          |93.9%     33| 100%     5|    -      0
+util/arena.h                           |90.0%     10| 100%     2|    -      0
+util/cache.cc                          |65.0%    197|78.9%    38|    -      0
+util/coding.cc                         |61.9%    105|85.7%    14|    -      0
+util/coding.h                          | 100%     41| 100%     5|    -      0
+util/comparator.cc                     |53.3%     30|75.0%     8|    -      0
+util/crc32c.cc                         |97.6%     42| 100%     4|    -      0
+util/crc32c.h                          | 100%      6| 100%     3|    -      0
+util/env.cc                            |72.2%     54|36.0%    25|    -      0
+util/env_posix.cc                      |55.9%    383|68.6%    70|    -      0
+util/filter_policy.cc                  | 100%      1|50.0%     2|    -      0
+util/hash.cc                           |59.1%     22| 100%     1|    -      0
+util/logging.cc                        |41.0%     39|20.0%     5|    -      0
+util/mutexlock.h                       | 100%      4| 100%     2|    -      0
+util/no_destructor.h                   | 100%      5| 100%     2|    -      0
+util/options.cc                        | 100%      1| 100%     1|    -      0
+util/posix_logger.h                    |85.7%     42| 100%     4|    -      0
+util/random.h                          |81.8%     11| 100%     3|    -      0
+util/status.cc                         |51.0%     51|66.7%     3|    -      0
+=============================================================================
+                                 Total:|51.8%   5154|61.8%   743|    -      0
+Coverage data collected.
+Collecting coverage data at Fri Dec 27 06:45:05 AM UTC 2024
+Reading tracefile /home/yilegu/squint/pm-cc-bug-finder/targets/leveldb-bug-0/code_coverage/filtered_coverage.info
+                                       |Lines       |Functions  |Branches    
+Filename                               |Rate     Num|Rate    Num|Rate     Num
+=============================================================================
+[/home/yilegu/squint/bug_study/leveldb-0/leveldb-before/]
+db/builder.cc                          |92.1%     38| 100%     1|    -      0
+db/db_impl.cc                          |40.4%    934|48.2%    56|    -      0
+db/db_impl.h                           | 100%      8| 100%     3|    -      0
+db/db_iter.cc                          |44.5%    155|78.9%    19|    -      0
+db/dbformat.cc                         |13.8%     80|16.7%    12|    -      0
+db/dbformat.h                          |63.2%     38|55.6%    18|    -      0
+db/filename.cc                         |90.0%     70|91.7%    12|    -      0
+db/log_reader.cc                       |43.0%    151|50.0%    10|    -      0
+db/log_writer.cc                       |78.9%     57|83.3%     6|    -      0
+db/memtable.cc                         |60.3%     68|76.2%    21|    -      0
+db/memtable.h                          | 100%      8| 100%     3|    -      0
+db/skiplist.h                          |68.7%    115|73.9%    23|    -      0
+db/snapshot.h                          |20.7%     29|25.0%     8|    -      0
+db/table_cache.cc                      |61.4%     70|62.5%     8|    -      0
+db/version_edit.cc                     |46.9%    162|50.0%     6|    -      0
+db/version_edit.h                      |83.8%     37|81.8%    11|    -      0
+db/version_set.cc                      |32.5%    870|28.9%    76|    -      0
+db/version_set.h                       |71.0%     31|60.0%    15|    -      0
+db/write_batch.cc                      |66.3%     83|68.4%    19|    -      0
+db/write_batch_internal.h              | 100%      2| 100%     2|    -      0
+include/leveldb/cache.h                |50.0%      2|50.0%     2|    -      0
+include/leveldb/db.h                   | 100%      1| 100%     1|    -      0
+include/leveldb/env.h                  |11.9%     42|20.8%    24|    -      0
+include/leveldb/iterator.h             | 100%      5| 100%     2|    -      0
+include/leveldb/options.h              |50.0%      2|50.0%     2|    -      0
+include/leveldb/slice.h                |88.6%     35| 100%    15|    -      0
+include/leveldb/status.h               |44.8%     29|46.7%    15|    -      0
+include/leveldb/table.h                | 100%      1| 100%     1|    -      0
+include/leveldb/table_builder.h        | 100%      1| 100%     1|    -      0
+port/port_stdcxx.h                     |70.8%     24|76.9%    13|    -      0
+table/block.cc                         |54.4%    147|76.2%    21|    -      0
+table/block.h                          | 100%      1| 100%     1|    -      0
+table/block_builder.cc                 |93.5%     46| 100%     5|    -      0
+table/block_builder.h                  | 100%      1| 100%     1|    -      0
+table/filter_block.cc                  | 0.0%     60| 0.0%     7|    -      0
+table/format.cc                        |77.3%     88| 100%     5|    -      0
+table/format.h                         | 100%     11| 100%    10|    -      0
+table/iterator.cc                      |42.5%     40|16.7%    18|    -      0
+table/iterator_wrapper.h               |70.6%     51|80.0%    15|    -      0
+table/merger.cc                        |50.5%     99|73.3%    15|    -      0
+table/table.cc                         |47.4%    152|50.0%    12|    -      0
+table/table_builder.cc                 |76.5%    149|76.9%    13|    -      0
+table/two_level_iterator.cc            |67.9%     84|77.8%    18|    -      0
+util/arena.cc                          |93.9%     33| 100%     5|    -      0
+util/arena.h                           |90.0%     10| 100%     2|    -      0
+util/cache.cc                          |65.0%    197|78.9%    38|    -      0
+util/coding.cc                         |61.9%    105|85.7%    14|    -      0
+util/coding.h                          | 100%     41| 100%     5|    -      0
+util/comparator.cc                     |53.3%     30|75.0%     8|    -      0
+util/crc32c.cc                         |97.6%     42| 100%     4|    -      0
+util/crc32c.h                          | 100%      6| 100%     3|    -      0
+util/env.cc                            |72.2%     54|36.0%    25|    -      0
+util/env_posix.cc                      |55.9%    383|68.6%    70|    -      0
+util/filter_policy.cc                  | 100%      1|50.0%     2|    -      0
+util/hash.cc                           |59.1%     22| 100%     1|    -      0
+util/logging.cc                        |41.0%     39|20.0%     5|    -      0
+util/mutexlock.h                       | 100%      4| 100%     2|    -      0
+util/no_destructor.h                   | 100%      5| 100%     2|    -      0
+util/options.cc                        | 100%      1| 100%     1|    -      0
+util/posix_logger.h                    |85.7%     42| 100%     4|    -      0
+util/random.h                          |81.8%     11| 100%     3|    -      0
+util/status.cc                         |51.0%     51|66.7%     3|    -      0
+=============================================================================
+                                 Total:|51.8%   5154|61.8%   743|    -      0
+Coverage data collected.
+Collecting coverage data at Fri Dec 27 06:45:08 AM UTC 2024
+Reading tracefile /home/yilegu/squint/pm-cc-bug-finder/targets/leveldb-bug-0/code_coverage/filtered_coverage.info
+                                       |Lines       |Functions  |Branches    
+Filename                               |Rate     Num|Rate    Num|Rate     Num
+=============================================================================
+[/home/yilegu/squint/bug_study/leveldb-0/leveldb-before/]
+db/builder.cc                          |92.1%     38| 100%     1|    -      0
+db/db_impl.cc                          |40.4%    934|48.2%    56|    -      0
+db/db_impl.h                           | 100%      8| 100%     3|    -      0
+db/db_iter.cc                          |44.5%    155|78.9%    19|    -      0
+db/dbformat.cc                         |13.8%     80|16.7%    12|    -      0
+db/dbformat.h                          |63.2%     38|55.6%    18|    -      0
+db/filename.cc                         |90.0%     70|91.7%    12|    -      0
+db/log_reader.cc                       |43.0%    151|50.0%    10|    -      0
+db/log_writer.cc                       |78.9%     57|83.3%     6|    -      0
+db/memtable.cc                         |60.3%     68|76.2%    21|    -      0
+db/memtable.h                          | 100%      8| 100%     3|    -      0
+db/skiplist.h                          |68.7%    115|73.9%    23|    -      0
+db/snapshot.h                          |20.7%     29|25.0%     8|    -      0
+db/table_cache.cc                      |61.4%     70|62.5%     8|    -      0
+db/version_edit.cc                     |46.9%    162|50.0%     6|    -      0
+db/version_edit.h                      |83.8%     37|81.8%    11|    -      0
+db/version_set.cc                      |32.5%    870|28.9%    76|    -      0
+db/version_set.h                       |71.0%     31|60.0%    15|    -      0
+db/write_batch.cc                      |66.3%     83|68.4%    19|    -      0
+db/write_batch_internal.h              | 100%      2| 100%     2|    -      0
+include/leveldb/cache.h                |50.0%      2|50.0%     2|    -      0
+include/leveldb/db.h                   | 100%      1| 100%     1|    -      0
+include/leveldb/env.h                  |11.9%     42|20.8%    24|    -      0
+include/leveldb/iterator.h             | 100%      5| 100%     2|    -      0
+include/leveldb/options.h              |50.0%      2|50.0%     2|    -      0
+include/leveldb/slice.h                |88.6%     35| 100%    15|    -      0
+include/leveldb/status.h               |44.8%     29|46.7%    15|    -      0
+include/leveldb/table.h                | 100%      1| 100%     1|    -      0
+include/leveldb/table_builder.h        | 100%      1| 100%     1|    -      0
+port/port_stdcxx.h                     |70.8%     24|76.9%    13|    -      0
+table/block.cc                         |54.4%    147|76.2%    21|    -      0
+table/block.h                          | 100%      1| 100%     1|    -      0
+table/block_builder.cc                 |93.5%     46| 100%     5|    -      0
+table/block_builder.h                  | 100%      1| 100%     1|    -      0
+table/filter_block.cc                  | 0.0%     60| 0.0%     7|    -      0
+table/format.cc                        |77.3%     88| 100%     5|    -      0
+table/format.h                         | 100%     11| 100%    10|    -      0
+table/iterator.cc                      |42.5%     40|16.7%    18|    -      0
+table/iterator_wrapper.h               |70.6%     51|80.0%    15|    -      0
+table/merger.cc                        |50.5%     99|73.3%    15|    -      0
+table/table.cc                         |47.4%    152|50.0%    12|    -      0
+table/table_builder.cc                 |76.5%    149|76.9%    13|    -      0
+table/two_level_iterator.cc            |67.9%     84|77.8%    18|    -      0
+util/arena.cc                          |93.9%     33| 100%     5|    -      0
+util/arena.h                           |90.0%     10| 100%     2|    -      0
+util/cache.cc                          |65.0%    197|78.9%    38|    -      0
+util/coding.cc                         |61.9%    105|85.7%    14|    -      0
+util/coding.h                          | 100%     41| 100%     5|    -      0
+util/comparator.cc                     |53.3%     30|75.0%     8|    -      0
+util/crc32c.cc                         |97.6%     42| 100%     4|    -      0
+util/crc32c.h                          | 100%      6| 100%     3|    -      0
+util/env.cc                            |72.2%     54|36.0%    25|    -      0
+util/env_posix.cc                      |55.9%    383|68.6%    70|    -      0
+util/filter_policy.cc                  | 100%      1|50.0%     2|    -      0
+util/hash.cc                           |59.1%     22| 100%     1|    -      0
+util/logging.cc                        |41.0%     39|20.0%     5|    -      0
+util/mutexlock.h                       | 100%      4| 100%     2|    -      0
+util/no_destructor.h                   | 100%      5| 100%     2|    -      0
+util/options.cc                        | 100%      1| 100%     1|    -      0
+util/posix_logger.h                    |85.7%     42| 100%     4|    -      0
+util/random.h                          |81.8%     11| 100%     3|    -      0
+util/status.cc                         |51.0%     51|66.7%     3|    -      0
+=============================================================================
+                                 Total:|51.8%   5154|61.8%   743|    -      0
+Coverage data collected.
