@@ -7,7 +7,7 @@
 
 This version contains necessary code and step to reproduce the main scientific claims in the paper.
 
-Pathfinder is a scalable and accurate application-level crash-consistency tool. It leverages representative testing: a new crash-state space reduction strategy based on the key observation is that the consistency of crash states is often correlated, even if those crash states are not identical. Pathfinder supports testing both POSIX-based applications and MMIO-based applications.
+Pathfinder is a scalable and accurate application-level crash-consistency tool. It leverages representative testing: a new crash-state space reduction strategy based on the key observation that the consistency of crash states is often correlated, even if those crash states are not identical. Pathfinder supports testing both POSIX-based applications and MMIO-based applications.
 
 There are mainly two kinds of applications evaluated: POSIX-based applications and MMIO-based applications.
 
@@ -20,7 +20,7 @@ The ALICE tool baseline could be found at [https://github.com/efeslab/alice](htt
 For MMIO-based applications, this version contains the full implementation for performing crash-consistency testing. However, we do not include MMIO-based workloads in this version as running them requiring access to machines that are equipped with persistent memory.
 *Therefore, the main target of this artifact is to obtain the Artifact Available and Artifact Evaluated badges*.
 
-*We also provide an dedicated server with environment setup for artifact evaluation. Please see `ARTIFACTS.md` for more details.*
+*We also provide a dedicated server with an environment setup for artifact evaluation. Please see `ARTIFACTS.md` for more details.*
 
 ## Hardware Dependencies
 
@@ -32,7 +32,7 @@ For MMIO-based applications, we run our experiments on a server with an Intel Xe
 
 ## Directory structure
 
-- `cmake`: Contains some custom CMake functions uses to build targets.
+- `cmake`: Contains some custom CMake functions used to build targets.
 - `deps`: Project dependencies, notably PMDK.
 - `pathfinder`: Core source code directory
 - `targets`: These are the workloads Pathfinder tests. This contains source code and `pathfinder-config.ini` files, which tells Pathfinder how to test the targets.
@@ -98,6 +98,8 @@ To reproduce the results presented in Section 6.1 of the paper, first navigates 
 As an example, `targets/leveldb-bug-0` contains `workload.cc` as the workload program and `checker.cc` as the checker program. 
 They have a dependency on the `leveldb` repo. 
 
+(*For artifact evaluation, if the dedicated server provided by us is used, you can skip this step as we pre-compiled all the applications. For example, `leveldb` application is setup and compiled in `targets/leveldb-bug-0/leveldb`*)
+
 First follow the `targets/leveldb-bug-0/README.md` to download and compile the debug version of `leveldb` at 
 the specific commit.
 After that, change the `targets/leveldb-bug-0/Makefile` to point to `leveldb` source folder by updating `{{ LEVELDB_SRC_PATH }}`. 
@@ -144,7 +146,7 @@ It will currently be generated at `Pathfinder/build/leveldb_bug_0` as `{{ build_
 
 `count_crash_state` specifies whether Pathfinder is counting crash states tested vs. total number of crash states during testing.
 
-`persevere` specifies whether Pathfinder uses its own implementation of Persevere algorithm to perform the testing.
+`persevere` specifies whether Pathfinder uses its own implementation of Persevere baseline to perform the testing.
 
 Under `[trace]` category, `trace_path` specifies if we are using offline collected logs to perform the testing and `root_dir` specifies what root directory is used for storing data when generating the trace.
 `root_dir` can be derived directly from the log.
@@ -224,8 +226,11 @@ Running Persevere baseline is done by specifying `persevere = yes` in the config
 
 ## Reusability Guide
 
+The core implementation of Pathfinder in `pathfinder` as well as the tracing tool in `pin_tool` should be evaluated for reusability. 
+
 ### Testing new applications
-To perform crash-consistency testing on a new application, the only requirement is to provide a workload program that runs operations and generates a data directory, and a checker program that reads the data directory and checks for crash-consistency. This is the same requirement as ALICE.
+
+To perform crash-consistency testing on a new application, the only requirement is to provide a workload program that runs operations and generates a data directory, and a checker program that reads the data directory and checks for crash-consistency. This is the same requirement as ALICE. The workload program should be compiled in debug mode from scratch so that Pathfinder's tracing tool could obtain the complete backtrace.
 
 ### Writing a Pathfinder config file
 
@@ -238,6 +243,16 @@ filled in with associated template values. The following are provided:
 - `build_root`: the build directory
 - `pwd`: the location of the config file in the build directory
 
+
+### More documentations on Pathfinder
+
+For a complete list of features supported by Pathfinder, please refer to the driver program `pathfinder/main.cpp`.
+
+### Limitations
+
+Pathfinder currently supports testing POSIX-based and MMIO-based applications.
+For applications that use both syscalls and MMIOs, Pathfinder can detect crash-consistency bugs from either syscall-level reordering, or memory operation-level reordering, but not both. 
+To detect a bug arised from interactions between syscalls and MMIOs, the Pathfinder persistence graph defined in `pathfinder/graph` needs to be subclassed to represent both syscalls and MMIOs in a single graph.
 
 ## Common Problems
 ### Too many files opened

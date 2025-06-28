@@ -38,7 +38,7 @@ We provide a ready-to-run environment for **Pathfinder** on a cloud machine (Int
 
 ## 4. Instructions
 
-1. Follow the `README.md` in `jiexiao/Pathfinder` to setup and run Pathfinder.
+1. Follow the `README.md` in `jiexiao/Pathfinder` to setup and run Pathfinder. Most targets should be directly runnable without changing the config files.
 2. Follow the `README.md` in `jiexiao/alice` to setup and run ALICE baseline.
 3. `jiexiao/Squint` contains a previous version of Pathfinder where we run MMIO-based applications evaluations on our own server. Due to the lack of persistent memory hardware support in the current server, compiling this version will encounter errors. However, we provide this stable version of the code for reference.
 4. `/home/cc/jiexiao/Squint/tools/eval_utils/bug_locations.py` contains all bugs found in MMIO-based applications, including both production-ready systems and microbenchmarks (Section 6.1 and 6.2 of the paper). 
