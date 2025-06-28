@@ -18,6 +18,9 @@ It additionally contains code coverage data collected from the hardware setup in
 The ALICE tool baseline could be found at [https://github.com/efeslab/alice](https://github.com/efeslab/alice).
 
 For MMIO-based applications, this version contains the full implementation for performing crash-consistency testing. However, we do not include MMIO-based workloads in this version as running them requiring access to machines that are equipped with persistent memory.
+*Therefore, the main target of this artifact is to obtain the Artifact Available and Artifact Evaluated badges*.
+
+*We also provide an dedicated server with environment setup for artifact evaluation. Please see `ARTIFACTS.md` for more details.*
 
 ## Hardware Dependencies
 
