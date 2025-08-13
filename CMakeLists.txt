@@ -4,7 +4,7 @@ project(Pathfinder LANGUAGES NONE)
 set(PATHFINDER_VERSION_MAJOR 3)
 set(PATHFINDER_VERSION_MINOR 0)
 
-
+find_package(ZLIB REQUIRED)
 find_package(LLVM 13 REQUIRED CONFIG)
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
