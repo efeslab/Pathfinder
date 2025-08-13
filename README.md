@@ -232,6 +232,165 @@ The core implementation of Pathfinder in `pathfinder` as well as the tracing too
 
 To perform crash-consistency testing on a new application, the only requirement is to provide a workload program that runs operations and generates a data directory, and a checker program that reads the data directory and checks for crash-consistency. This is the same requirement as ALICE. The workload program should be compiled in debug mode from scratch so that Pathfinder's tracing tool could obtain the complete backtrace.
 
+Pathfinder currently supports C/C++ workloads. This limitation is due to our Pin tool-based tracer, which records POSIX syscalls, MMIO accesses, and native backtraces for C/C++ binaries. Pathfinder can be extended to other languages that exercise POSIX and MMIO by leveraging an alternative tracer that emits the same events and backtraces for those runtimes. 
+
+Below is an example of testing a new C/C++ workload in Pathfinder.
+
+#### Example
+Consider the example in Figure 4 of the paper as a new C/C++ workload we would like to test. We will first prepare the workload program.
+
+The whole example could be found in `Pathfinder/targets/example`.
+
+```
+// Pathfinder/targets/example/workload.cpp
+
+...
+
+// Fn2(f) { write(f); write(f); }
+static void Fn2(const std::string& f) {
+    append_write(f, "Fn2: first line\n");
+    append_write(f, "Fn2: second line\n");
+}
+
+// Fn4(f1,f2) { write(f1); write(f2); fdatasync(f2); }
+static void Fn4(const std::string& f1, const std::string& f2) {
+    append_write(f1, "Fn4: write to f1\n");
+    // open f2 and keep the fd to call fdatasync on it
+    int fd2 = ::open(f2.c_str(), O_CREAT | O_WRONLY | O_APPEND, 0644);
+    if (fd2 < 0) terminate(("open " + f2).c_str());
+    const char* data = "Fn4: write to f2\n";
+    append_write(f2, data);
+    if (::fdatasync(fd2) < 0) terminate(("fdatasync " + f2).c_str());
+    if (::close(fd2) < 0) terminate(("close " + f2).c_str());
+}
+
+// Fn5(f) { rename(f); sync(); }
+static void Fn5(const std::string& f) {
+    std::string newname = f + ".renamed";
+    if (::rename(f.c_str(), newname.c_str()) < 0) terminate(("rename " + f).c_str());
+    ::sync();  // flush filesystem metadata to disk
+}
+
+// Fn3(f1,f2,rename_flag) { Fn4(f1); if (rename_flag) Fn5(f2); }
+static void Fn3(const std::string& f1, const std::string& f2, bool rename_flag) {
+    Fn4(f1, f2);
+    if (rename_flag) Fn5(f2);
+}
+
+// Fn1() {
+//   Fn2(f1);
+//   Fn3(f1,f2,true);
+//   ...
+//   Fn2(f7);make 
+//   Fn3(f7,f8,false);
+// }
+static void Fn1(const std::string& dir) {
+    std::string f1 = dir + "/f1.txt";
+    std::string f2 = dir + "/f2.txt";
+    std::string f7 = dir + "/f7.txt";
+    std::string f8 = dir + "/f8.txt";
+
+    Fn2(f1);
+    Fn3(f1, f2, true);
+
+    // (Ellipsis in the figure — do anything else you want in between)
+
+    Fn2(f7);
+    Fn3(f7, f8, false);
+
+    std::cout << "Done. See files under ./" << dir << "\n";
+}
+
+...
+
+```
+
+Then we will prepare a checker program. Specifically, this checker checks if it is possible that in function `Fn3`, the rename operation to `f2.txt` is persisted to disk before the writes in `Fn4` are persisted.
+
+```
+// Pathfinder/targets/example/checker.cpp
+...
+    // Check if a renamed f2 file exists
+    for (auto& entry : fs::directory_iterator(dir)) {
+        if (entry.is_regular_file() &&
+            entry.path().filename().string().find("f2.txt") != std::string::npos &&
+            entry.path().filename() != "f2.txt") {
+            std::cout << "rename_applied: " << rename_applied << std::endl;
+            rename_applied = true;
+            break;
+        }
+    }
+
+    // Check if "Fn4: write to f1" is in f1.txt
+    bool f1_has_write = false;
+    std::ifstream fin(f1);
+    if (fin) {
+        std::string line;
+        while (std::getline(fin, line)) {
+            std::cout << "line: " << line << std::endl;
+            if (line.find("Fn4: write to f1") != std::string::npos) {
+                std::cout << "f1_has_write: " << f1_has_write << std::endl;
+                f1_has_write = true;
+            }
+        }
+    }
+
+    // Report result
+    if (rename_applied && !f1_has_write) {
+        std::cout << "[POSSIBLE ANOMALY] rename persisted but f1 write did not.\n";
+        return 1; // anomaly
+    } else {
+        std::cout << "[OK] Either rename not applied, or f1 write present.\n";
+        return 0; // normal
+        
+...
+```
+
+After compiling the above two programs and making sure they run without runtime errors, we will prepare a Pathfinder config. This config file specifies to use POSIX mode for crash-consistency testing and the commands for workload and checker programs.
+
+```
+// Pathfinder/targets/example/pathfinder-config.ini
+[general]
+output_dir_tmpl = {{ build_root }}/example
+verbose = yes
+pm_fs_path = ../fs_path
+max_nproc = 80
+parallelize = yes
+sanity_test = no
+fsync_test = no
+count_crash_state = no
+mode = posix
+
+[trace]
+verbose = yes
+cmd_tmpl = {{ pwd }}/workload {{ pmdir }}
+
+[test]
+checker_tmpl = {{ pwd }}/checker {{ pmdir }}
+timeout = 30
+```
+
+After running this example with `Pathfinder/build/pathfinder/pathfinder-core Pathfinder/targets/example/pathfinder-config.ini`, we will observe failure cases.
+
+```
+ret_code,message,note,timestamp(posix mode)
+0,1,2,3,4,5,6,9,10,11,12,15,1,2,3,4,5,6,7,8,9,10,11,12,1,"[STDOUT] rename_applied: 0
+[STDOUT] line: Fn2: first line
+[STDOUT] line: Fn2: second line
+[STDOUT] [POSSIBLE ANOMALY] rename persisted but f1 write did not.
+","posix",1
+```
+
+This shows that a crash-consistency bug is triggered when operations #7 and #8 are not applied. Upon checking the tracer log, we can verify that these operations correspond to the write to `f1.txt` issued by `Fn4`. 
+
+```
+6,0,OPEN,Pathfinder/fs_path/31ea-df44-82a7-8a7a/f1.txt,1089,420,6,33;__open,,,0x00011453b;Fn4,Pathfinder/targets/example/workload.cpp,39,0x000001a28;main,Pathfinder/targets/example/workload.cpp,58,0x000001588;__libc_init_first,,,0x000029d90;__libc_start_main,,,0x000029e40;_start,,,0x000001735;
+7,0,WRITE,6,Pathfinder/fs_path/31ea-df44-82a7-8a7a/f1.txt,17,Rm40OiB3cml0ZSB0byBmMQo=;__write,,,0x000114887;append_write,Pathfinder/targets/example/workload.cpp,23,0x000001876;Fn4,Pathfinder/targets/example/workload.cpp,39,0x000001a28;main,Pathfinder/targets/example/workload.cpp,58,0x000001588;__libc_init_first,,,0x000029d90;__libc_start_main,,,0x000029e40;_start,,,0x000001735;
+8,0,CLOSE,6,Pathfinder/fs_path/31ea-df44-82a7-8a7a/f1.txt;__close,,,0x000114f67;append_write,Pathfinder/targets/example/workload.cpp,28,0x00000188e;Fn4,Pathfinder/targets/example/workload.cpp,39,0x000001a28;main,Pathfinder/targets/example/workload.cpp,58,0x000001588;__libc_init_first,,,0x000029d90;__libc_start_main,,,0x000029e40;_start,,,0x000001735;
+9,0,OPEN,Pathfinder/fs_path/31ea-df44-82a7-8a7a/f2.txt,1089,420,6,0;__open,,,0x00011453b;main,Pathfinder/targets/example/workload.cpp,58,0x000001588;__libc_init_first,,,0x000029d90;__libc_start_main,,,0x000029e40;_start,,,0x000001735;
+```
+
+
 ### Writing a Pathfinder config file
 
 See `targets/leveldb-bug-0/pathfinder-config.ini` for an example.
