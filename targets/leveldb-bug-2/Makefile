@@ -1,5 +1,5 @@
 # Path to LevelDB source
-LEVELDB_SRC = leveldb
+LEVELDB_SRC = {{ LEVELDB_SRC_PATH }}
 
 # Executables to build
 EXECUTABLES = workload checker
